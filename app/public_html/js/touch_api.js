@@ -12,7 +12,7 @@ class TouchApi {
     }
 
     GetPoint(status, event) {
-        const timestamp = Math.round(performance.now() * 1000000);
+        const timestamp = Math.round(performance.now());
         // Extract properties from the event object
         const properties = {
             timestamp,
