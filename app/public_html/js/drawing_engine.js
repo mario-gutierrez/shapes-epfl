@@ -47,6 +47,7 @@ class DrawingEngine {
         if (this.websocket) {
             this.websocket.Send(point);
         }
+        logArea.innerHTML = JSON.stringify(point);
     }
     DrawImage(imageUrl, callback = () => { }) {
         const image = new Image(this.canvas.width, this.canvas.height);
