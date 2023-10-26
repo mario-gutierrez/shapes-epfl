@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Stylus logger</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="user-scalable=no, width=device-width">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <style type="text/css">
+    #canvas {
+      border: 2px solid red;
+      margin: 3%;
+      padding: 0;
+      width: 93%;
+      height: 80vh;
+    }
+
+    button {
+      margin-left: 3%;
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas"></canvas>
+  <br>
+  <button id="logButton" onclick="toggleLog()">Start Log</button>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/websocket.js"></script>
+<script src="js/touch_api.js"></script>
+<script src="js/drawing_engine.js"></script>
+<script type="text/javascript">
+  const dpi = 264; //iPad Pro 12.9 dpi resolution
+  const canvas = document.getElementById("canvas");
+  const ws = new WSocket("log_msg", (data) => { });
+  let isLogging = false;
+  const logButton = document.querySelector("#logButton");
+  let drawingEngine;
+
+  function toggleLog() {
+    if (isLogging) {
+      ws.Send({ ctrl: "close_log" });
+      logButton.innerHTML = "Start Log";
+      logButton.style.background = '#4CAF50';
+    } else {
+      drawingEngine.DrawSquare([canvas.clientWidth / 2, canvas.clientHeight / 2], Math.max(canvas.clientWidth, canvas.clientHeight), "#ffffff");
+      ws.Send({ ctrl: "new_log" });
+      logButton.innerHTML = "Stop Log";
+      logButton.style.background = '#F44336';
+    }
+    isLogging = !isLogging;
+  }
+
+  function setup() {
+    console.log(canvas.clientWidth + " " + canvas.clientHeight);
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+    drawingEngine = new DrawingEngine(canvas, ws);
+    const touchHandler = new TouchApi(canvas, drawingEngine, dpi);
+
+
+
+  }
+
+  window.onload = setup;
+</script>
+
+</html>
