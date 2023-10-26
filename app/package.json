@@ -1,0 +1,23 @@
+{
+  "name": "stylus_logger",
+  "version": "1.0.0",
+  "description": "Stylus logger app",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "keywords": [
+    "pencil",
+    "logger",
+    "stylus"
+  ],
+  "author": "Mario Gutierrez",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "ip": "^1.1.8",
+    "line-reader": "^0.4.0",
+    "socket.io": "^4.5.4"
+  }
+}
