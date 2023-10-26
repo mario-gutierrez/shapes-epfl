@@ -7,8 +7,6 @@ class DrawingEngine {
         this.canvas = canvas;
     }
     DrawSquare(center, size, color) {
-        console.log(center);
-        console.log(size);
         let s = size / 2;
         this.context.fillStyle = color;
         this.context.fillRect(center[0] - s, center[1] - s, size, size);
@@ -57,11 +55,5 @@ class DrawingEngine {
             callback();
         };
         image.src = imageUrl;
-    }
-    DrawPoint(x, y, pressure, color) {
-        const status = '';
-        const screenCoords = [x, y];
-        const point = { screenCoords, pressure, status };
-        this.AddPoint(point, color);
     }
 }
