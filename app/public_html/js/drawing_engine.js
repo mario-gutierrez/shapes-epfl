@@ -41,7 +41,9 @@ class DrawingEngine {
             color = "#00ff00";
         }
 
-        this.DrawSquare(point.screenCoords, point.pressure * 10.0, color);
+        const screenCoords = [point.offsetX, point.offsetY];
+
+        this.DrawSquare(screenCoords, point.pressure * 10.0, color);
         if (this.websocket) {
             this.websocket.Send(point);
         }
