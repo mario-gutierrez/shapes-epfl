@@ -8,23 +8,28 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <style type="text/css">
     #canvas {
-      border: 2px solid red;
-      margin: 3%;
+      border: 2px solid gray;
+      margin: 10px;
       padding: 0;
-      width: 93%;
-      height: 80vh;
+      width: 90%;
+      height: 75vh;
     }
 
     button {
-      margin-left: 3%;
+      margin: 10px;
       background-color: #4CAF50;
       border: none;
       color: white;
-      padding: 15px 32px;
+      padding: 15px;
       text-align: center;
       text-decoration: none;
       display: inline-block;
       font-size: 16px;
+      width: 200px;
+    }
+
+    textarea {
+      margin: 10px;
     }
   </style>
 </head>
@@ -32,7 +37,14 @@
 <body>
   <canvas id="canvas"></canvas>
   <br>
-  <button id="logButton" onclick="toggleLog()">Start Log</button>
+  <table>
+    <tr>
+      <td><button id="logButton" onclick="toggleLog()">Start Log</button></td>
+    </tr>
+    <tr>
+      <td><textarea id="logArea" cols="120" rows="3" disabled></textarea></textarea></td>
+    </tr>
+  </table>
 </body>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -61,17 +73,19 @@
     isLogging = !isLogging;
   }
 
-  function setup() {
+  function resizeCanvas() {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
+  }
+
+  function setup() {
+    resizeCanvas();
     drawingEngine = new DrawingEngine(canvas, ws);
     const touchHandler = new TouchApi(canvas, drawingEngine, dpi);
-
-
-
   }
 
   window.onload = setup;
+  window.onresize = resizeCanvas;
 </script>
 
 </html>
