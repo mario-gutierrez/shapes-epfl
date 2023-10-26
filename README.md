@@ -29,3 +29,5 @@ Stylus logger running on 172.21.79.167 3000
 
 #For this example, the corresponding URL is: http://172.21.79.167:3000
 ```
+
+Stylus data is logged as a json array. Files are saved in the folder: `app/public_html/data`
