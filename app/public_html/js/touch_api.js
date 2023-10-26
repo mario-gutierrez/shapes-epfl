@@ -11,49 +11,46 @@ class TouchApi {
         // alert("1 pixel = " + this.pixelSize + "m  1cm = " + (dpi / (100.0 * inchInMeters)) / window.devicePixelRatio + " pixels");
     }
 
-    GetPoint(status, e) {
+    GetPoint(status, event) {
         const timestamp = Math.round(performance.now() * 1000000);
-        let pressure = 0.1;
-        let x, y;
-        let altitude = 0;
-        let azimuth = 0;
-        const rect = this.canvas.getBoundingClientRect();
-        if (e.touches && e.touches[0] && typeof e.touches[0]["force"] !== "undefined") {
-            if (e.touches[0]["force"] > 0) {
-                pressure = e.touches[0]["force"];
-            }
-            x = e.touches[0].clientX - rect.left;
-            y = e.touches[0].clientY - rect.top;
-            altitude = e.touches[0].altitudeAngle;
-            azimuth = e.touches[0].azimuthAngle;
-        } else {
-            pressure = 1.0;
-            x = e.clientX - rect.left;
-            y = e.clientY - rect.top;
-        }
-        if (x & y) {
-            x = Math.floor(x);
-            y = Math.floor(y);
-        } else {
-            x = 0;
-            y = 0;
-            status = "error";
-        }
-        const position = [x * this.pixelSize, y * this.pixelSize, 0];
-        const screenCoords = [x, y]
-        return { timestamp, position, screenCoords, pressure, altitude, azimuth, status }
+        // Extract properties from the event object
+        const properties = {
+            timestamp,
+            'pointerId': event.pointerId,
+            'pointerType': event.pointerType,
+            'isPrimary': event.isPrimary,
+            'width': event.width,
+            'height': event.height,
+            'pressure': event.pressure,
+            'tiltX': event.tiltX,
+            'tiltY': event.tiltY,
+            'tangentialPressure': event.tangentialPressure,
+            'twist': event.twist,
+            'movementX': event.movementX,
+            'movementY': event.movementY,
+            'clientX': event.clientX,
+            'clientY': event.clientY,
+            'screenX': event.screenX,
+            'screenY': event.screenY,
+            'offsetX': event.offsetX,
+            'offsetY': event.offsetY,
+            'status': status
+        };
+
+        return properties;
     }
 
     EnableListeners() {
         for (const ev of ["touchstart", "mousedown"]) {
             this.canvas.addEventListener(ev, function (e) {
+                e.preventDefault();
                 const point = this.GetPoint("start", e);
                 this.isMousedown = true;
                 this.delegate.AddPoint(point);
             }.bind(this), false);
         }
 
-        for (const ev of ['touchmove', 'mousemove']) {
+        for (const ev of ['pointermove']) {
             this.canvas.addEventListener(ev, function (e) {
                 if (!this.isMousedown) return
                 e.preventDefault();
@@ -64,6 +61,7 @@ class TouchApi {
 
         for (const ev of ['touchend', 'touchleave', 'mouseup']) {
             this.canvas.addEventListener(ev, function (e) {
+                e.preventDefault();
                 this.isMousedown = false;
                 const point = this.GetPoint("end", e);
                 this.delegate.AddPoint(point);
