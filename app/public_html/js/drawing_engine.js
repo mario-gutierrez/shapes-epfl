@@ -49,14 +49,4 @@ class DrawingEngine {
         }
         logArea.innerHTML = JSON.stringify(point);
     }
-    DrawImage(imageUrl, callback = () => { }) {
-        const image = new Image(this.canvas.width, this.canvas.height);
-        const canvasCtx = this.context;
-        // Draw when image has loaded
-        image.onload = () => {
-            canvasCtx.drawImage(image, 0, 0);
-            callback();
-        };
-        image.src = imageUrl;
-    }
 }
