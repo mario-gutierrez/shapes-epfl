@@ -5,6 +5,7 @@ class DrawingEngine {
         this.points = [];
         this.websocket = websocket;
         this.canvas = canvas;
+        this.previousPoint = undefined;
     }
     DrawSquare(center, size, color) {
         let s = size / 2;
@@ -39,11 +40,16 @@ class DrawingEngine {
 
         if (point.status === 'start') {
             color = "#00ff00";
+            this.previousPoint = undefined;
         }
 
         const screenCoords = [point.offsetX, point.offsetY];
 
-        this.DrawSquare(screenCoords, point.pressure * 10.0, color);
+        if (this.previousPoint) {
+            this.DrawVector(screenCoords, [this.previousPoint.offsetX, this.previousPoint.offsetY], 0, 3, color);
+        }
+        this.DrawSquare(screenCoords, point.pressure * 3, color);
+        this.previousPoint = point;
         if (this.websocket) {
             this.websocket.Send(point);
         }
