@@ -1,3 +1,7 @@
+const Modes = {
+    Drawing: 'drawing',
+    Filling: 'filling'
+};
 class TouchApi {
     constructor(canvas, delegate, dpi) {
         this.canvas = canvas;
@@ -6,6 +10,7 @@ class TouchApi {
         this.EnableListeners();
         const inchInMeters = 0.0254;
         this.pixelSize = (inchInMeters / dpi) * window.devicePixelRatio;
+        this.mode = Modes.Drawing;
         // On an iPad Pro 12.9 2020 with a screen resolution of 264 DPI:
         // 1 pixel = 0.000192424m  1cm = 51.9685034 pixels
         // alert("1 pixel = " + this.pixelSize + "m  1cm = " + (dpi / (100.0 * inchInMeters)) / window.devicePixelRatio + " pixels");
@@ -46,7 +51,9 @@ class TouchApi {
                 e.preventDefault();
                 const point = this.GetPoint("start", e);
                 this.isMousedown = true;
-                this.delegate.AddPoint(point);
+                if (this.mode == Modes.Drawing) {
+                    this.delegate.AddPoint(point);
+                }
             }.bind(this), false);
         }
 
@@ -54,8 +61,10 @@ class TouchApi {
             this.canvas.addEventListener(ev, function (e) {
                 if (!this.isMousedown) return
                 e.preventDefault();
-                const point = this.GetPoint("move", e);
-                this.delegate.AddPoint(point);
+                if (this.mode == Modes.Drawing) {
+                    const point = this.GetPoint("move", e);
+                    this.delegate.AddPoint(point);
+                }
             }.bind(this), false);
         }
 
@@ -64,7 +73,11 @@ class TouchApi {
                 e.preventDefault();
                 this.isMousedown = false;
                 const point = this.GetPoint("end", e);
-                this.delegate.AddPoint(point);
+                if (this.mode == Modes.Drawing) {
+                    this.delegate.AddPoint(point);
+                } else if (this.mode == Modes.Filling) {
+                    this.delegate.Fill(point);
+                }
             }.bind(this), false);
         }
     }
