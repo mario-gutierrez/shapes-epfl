@@ -40,6 +40,7 @@
   <table>
     <tr>
       <td><button id="logButton" onclick="toggleLog()">Start Log</button></td>
+      <td><button id="fillButton">Fill</button></td>
     </tr>
     <tr>
       <td><textarea id="logArea" cols="120" rows="3" disabled></textarea></textarea></td>
@@ -82,7 +83,21 @@
     resizeCanvas();
     drawingEngine = new DrawingEngine(canvas, ws);
     const touchHandler = new TouchApi(canvas, drawingEngine, dpi);
+
+    fillButton.onclick = event => {
+      if (touchHandler.mode == Modes.Drawing) {
+        touchHandler.mode = Modes.Filling;
+        fillButton.style.background = '#00AAFF';
+      } else if (touchHandler.mode == Modes.Filling) {
+        touchHandler.mode = Modes.Drawing;
+        fillButton.style.background = '#4CAF50';
+      }
+    }
   }
+
+
+
+
 
   window.onload = setup;
   window.onresize = resizeCanvas;
