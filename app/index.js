@@ -52,7 +52,6 @@ io.on('connection', (socket) => {
                 let files = getFilesList(socket);
             }
         } else {
-            socket.broadcast.emit('log_msg', msg);
             loggerTablet.logData(JSON.stringify(msg));
         }
     });
