@@ -8,6 +8,7 @@ class DrawingEngine {
         this.previousPoint = undefined;
         this.lineColorRGB = [10, 10, 11, 255];
         this.lineColor = this.RGBtoHexString(this.lineColorRGB);
+        this.colorSimilarityThreshold = 10;
         this.currentImageData = undefined;
     }
     RGBtoHexString(color) {
@@ -80,7 +81,7 @@ class DrawingEngine {
             const pixelColor = [this.currentImageData[indices[0]], this.currentImageData[indices[1]], this.currentImageData[indices[2]]];
 
             const dist = Math.hypot(pixelColor[0] - color[0], pixelColor[1] - color[1], pixelColor[2] - color[2]);
-            if (dist < 15) {
+            if (dist < this.colorSimilarityThreshold) {
                 return 1;
             }
             return 0;
