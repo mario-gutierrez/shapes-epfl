@@ -18,8 +18,9 @@ class TouchApi {
 
     GetPoint(status, event) {
         const timestamp = Math.round(performance.now());
+
         // Extract properties from the event object
-        const properties = {
+        let properties = {
             timestamp,
             'pointerId': event.pointerId,
             'pointerType': event.pointerType,
@@ -42,6 +43,11 @@ class TouchApi {
             'status': status
         };
 
+        if (event.touches && event.touches[0]) {
+            properties.offsetX = event.touches[0].pageX;
+            properties.offsetY = event.touches[0].pageY;
+            console.log(properties.offsetX + " " + properties.offsetY);
+        }
         return properties;
     }
 
