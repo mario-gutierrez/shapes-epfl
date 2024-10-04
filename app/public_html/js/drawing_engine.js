@@ -9,6 +9,9 @@ class DrawingEngine {
         this.lineColorRGB = [10, 10, 11, 255];
         this.lineColor = this.RGBtoHexString(this.lineColorRGB);
         this.colorSimilarityThreshold = 10;
+        this.maxLineWidth = 10;
+        this.minLineWidth = 5
+        this.maxDrawingMovement = 100;
         this.currentImageData = undefined;
     }
     RGBtoHexString(color) {
@@ -21,6 +24,13 @@ class DrawingEngine {
         let s = size / 2;
         this.context.fillStyle = color;
         this.context.fillRect(center[0] - s, center[1] - s, size, size);
+    }
+    DrawCircle(center, size, color) {
+        let s = size / 2;
+        this.context.fillStyle = color;
+        this.context.beginPath();
+        this.context.arc(center[0], center[1], s, 0, 2 * Math.PI);
+        this.context.fill();
     }
     DrawVector(vector, origin, length, width, color) {
         // set line stroke and line width
@@ -43,22 +53,22 @@ class DrawingEngine {
         this.points.push(point);
 
         if (point.status === 'end') {
-            color = "#ff0000";
             this.strokes.push(this.points);
             this.points = [];
         }
 
         if (point.status === 'start') {
-            color = "#00ff00";
             this.previousPoint = undefined;
         }
 
         const screenCoords = [point.offsetX, point.offsetY];
+        let speed = Math.min(Math.hypot(point.movementX, point.movementY), this.maxDrawingMovement);
+        const widthBasedOnSpeed = Math.min(Math.round((1.0 - (speed / this.maxDrawingMovement)) * this.maxLineWidth), this.minLineWidth);
 
         if (this.previousPoint) {
-            this.DrawVector(screenCoords, [this.previousPoint.offsetX, this.previousPoint.offsetY], 0, 3, this.lineColor);
+            this.DrawVector(screenCoords, [this.previousPoint.offsetX, this.previousPoint.offsetY], 0, widthBasedOnSpeed, color);
         }
-        this.DrawSquare(screenCoords, point.pressure * 3, color);
+        this.DrawCircle(screenCoords, widthBasedOnSpeed, color);
         this.previousPoint = point;
         if (this.websocket) {
             this.websocket.Send(point);
