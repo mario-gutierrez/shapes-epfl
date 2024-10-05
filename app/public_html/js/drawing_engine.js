@@ -58,6 +58,7 @@ class DrawingEngine {
         }
 
         if (point.status === 'start') {
+            this.points = [];
             this.previousPoint = undefined;
         }
 
