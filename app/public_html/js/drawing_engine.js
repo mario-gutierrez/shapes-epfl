@@ -155,4 +155,76 @@ class DrawingEngine {
         }
         return false;
     }
+
+    FillInDistantPoints() {
+        for (let i = 0; i < this.points.length - 1; i++) {
+            const p0 = [this.points[i].offsetX, this.points[i].offsetY];
+            const p1 = [this.points[i + 1].offsetX, this.points[i + 1].offsetY];
+            const step = this.minLineWidth;
+            const distance = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]);
+            if (distance >= step * 2) {
+                const dx = p1[0] - p0[0];
+                const dy = p1[1] - p0[1];
+                console.log(`${p0[0]},${p0[1]}   ${p1[0]},${p1[1]}`);
+
+                if (Math.abs(dx) > step * 2 && Math.abs(dy) > step * 2) {
+                    const slope = dy / dx;
+                    if (Math.abs(slope) > 0) {
+                        let newIndex = i;
+                        const steps = Math.round(Math.abs(dx) / step);
+                        for (let j = 1; j <= steps; j++) {
+                            const x = (dx > 0 ? 1 : -1) * step * j;
+                            const p = { offsetX: p0[0] + x, offsetY: Math.floor(p0[1] + x * slope) };
+                            newIndex = i + j;
+                            this.points.splice(newIndex, 0, p);
+                            this.DrawSquare([p.offsetX, p.offsetY], step / 2, '#00ff00');
+                        }
+                        i = newIndex;
+                    }
+                }
+                else if (Math.abs(dy) >= Math.abs(dx)) {
+                    let newIndex = i;
+                    const steps = Math.round(Math.abs(dy) / step);
+                    const deltaX = dx / steps;
+                    for (let j = 1; j < steps; j++) {
+                        const y = (dy > 0 ? 1 : -1) * step * j;
+                        const p = { offsetX: Math.round(p0[0] + deltaX * j), offsetY: p0[1] + y };
+                        newIndex = i + j;
+                        this.points.splice(newIndex, 0, p);
+                        this.DrawSquare([p.offsetX, p.offsetY], step / 2, '#00ff00');
+                    }
+                    i = newIndex;
+                }
+                else {
+                    let newIndex = i;
+                    const steps = Math.round(Math.abs(dx) / step);
+                    const deltaY = dy / steps;
+                    for (let j = 1; j < steps; j++) {
+                        const x = (dx > 0 ? 1 : -1) * step * j;
+                        const p = { offsetX: p0[0] + x, offsetY: Math.round(p0[1] + deltaY * j) };
+                        newIndex = i + j;
+                        this.points.splice(newIndex, 0, p);
+                        this.DrawSquare([p.offsetX, p.offsetY], step / 2, '#00ff00');
+                    }
+                    i = newIndex;
+                }
+            }
+        }
+    }
+    FindIntersections(x, y) {
+        const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        this.currentImageData = imageData.data;
+
+        const intersectionDelta = this.minLineWidth;
+        for (let i = 0; i < this.points.length; i++) {
+            const p = [this.points[i].offsetX, this.points[i].offsetY];
+            if (x > 0 && Math.abs(p[0] - x) <= intersectionDelta) {
+                this.DrawSquare(p, this.minLineWidth / 2, '#ff0000');
+            }
+
+            if (y > 0 && Math.abs(p[1] - y) <= intersectionDelta) {
+                this.DrawSquare(p, this.minLineWidth / 2, '#ff0000');
+            }
+        }
+    }
 }
