@@ -156,7 +156,7 @@ class DrawingEngine {
         return false;
     }
 
-    FillInDistantPoints() {
+    FillInDistantPoints(drawAddedPoints = false) {
         for (let i = 0; i < this.points.length - 1; i++) {
             const p0 = [this.points[i].offsetX, this.points[i].offsetY];
             const p1 = [this.points[i + 1].offsetX, this.points[i + 1].offsetY];
@@ -176,7 +176,9 @@ class DrawingEngine {
                             const p = { offsetX: p0[0] + x, offsetY: Math.floor(p0[1] + x * slope) };
                             newIndex = i + j;
                             this.points.splice(newIndex, 0, p);
-                            this.DrawSquare([p.offsetX, p.offsetY], step / 2, '#00ff00');
+                            if (drawAddedPoints) {
+                                this.DrawSquare([p.offsetX, p.offsetY], step / 2, '#00ff00');
+                            }
                         }
                         i = newIndex;
                     }
@@ -190,7 +192,9 @@ class DrawingEngine {
                         const p = { offsetX: Math.round(p0[0] + deltaX * j), offsetY: p0[1] + y };
                         newIndex = i + j;
                         this.points.splice(newIndex, 0, p);
-                        this.DrawSquare([p.offsetX, p.offsetY], step / 2, '#00ff00');
+                        if (drawAddedPoints) {
+                            this.DrawSquare([p.offsetX, p.offsetY], step / 2, '#00ff00');
+                        }
                     }
                     i = newIndex;
                 }
@@ -203,14 +207,16 @@ class DrawingEngine {
                         const p = { offsetX: p0[0] + x, offsetY: Math.round(p0[1] + deltaY * j) };
                         newIndex = i + j;
                         this.points.splice(newIndex, 0, p);
-                        this.DrawSquare([p.offsetX, p.offsetY], step / 2, '#00ff00');
+                        if (drawAddedPoints) {
+                            this.DrawSquare([p.offsetX, p.offsetY], step / 2, '#00ff00');
+                        }
                     }
                     i = newIndex;
                 }
             }
         }
     }
-    FindIntersections(x, y) {
+    FindIntersections(x, y, drawIntersectionPoints = false) {
         const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
         this.currentImageData = imageData.data;
 
@@ -225,12 +231,16 @@ class DrawingEngine {
             const p = [this.points[i].offsetX, this.points[i].offsetY];
             if (x > 0 && Math.abs(p[0] - x) <= intersectionDelta) {
                 xIntersections.push(i);
-                this.DrawSquare(p, this.minLineWidth / 2, '#ff0000');
+                if (drawIntersectionPoints) {
+                    this.DrawSquare(p, this.minLineWidth / 2, '#ff0000');
+                }
             }
 
             if (y > 0 && Math.abs(p[1] - y) <= intersectionDelta) {
                 yIntersections.push(i);
-                this.DrawSquare(p, this.minLineWidth / 2, '#ff0000');
+                if (drawIntersectionPoints) {
+                    this.DrawSquare(p, this.minLineWidth / 2, '#ff0000');
+                }
             }
         }
 
@@ -268,6 +278,9 @@ class DrawingEngine {
         }
         yLines.push(currentLine);
 
+        return { xLines, yLines };
+    }
+    DrawIntersectionLines(xLines, yLines) {
         for (let i = 0; i < xLines.length; i++) {
             const line = xLines[i];
             const p0 = [this.points[line[0]].offsetX, this.points[line[0]].offsetY];
