@@ -54,7 +54,6 @@ class DrawingEngine {
 
         if (point.status === 'end') {
             this.strokes.push(this.points);
-            this.points = [];
         }
 
         if (point.status === 'start') {
