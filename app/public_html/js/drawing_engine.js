@@ -299,4 +299,35 @@ class DrawingEngine {
             this.DrawSquare(p1, 5, '#00ff10');
         }
     }
+    GetWindingNumbers(xLines, yLines, point) {
+        const lines = [xLines, yLines];
+        const windingNumbers = [];
+        for (let coord = 0; coord < lines.length; coord++) {
+
+            const lineSet = lines[coord];
+            const linePoints = [];
+            for (let lineIndx = 0; lineIndx < lineSet.length; lineIndx++) {
+                const line = lineSet[lineIndx];
+                const p0 = [this.points[line[0]].offsetX, this.points[line[0]].offsetY];
+                const p1 = [this.points[line[1]].offsetX, this.points[line[1]].offsetY];
+                linePoints.push([p0, p1]);
+            }
+
+            const coordToCompare = coord == 0 ? 1 : 0;
+            linePoints.sort((a, b) => a[0][coordToCompare] - b[0][coordToCompare]);
+
+            let windingNumber = 0;
+
+            for (let lineIndx = 0; lineIndx < linePoints.length; lineIndx++) {
+                const lineCoords = linePoints[lineIndx];
+                if (point[coordToCompare] > lineCoords[0][coordToCompare]) {
+                    windingNumber += lineCoords[0][coord] < lineCoords[1][coord] ? 1 : -1;
+                } else {
+                    break;
+                }
+            }
+            windingNumbers.push(windingNumber);
+        }
+        return windingNumbers;
+    }
 }

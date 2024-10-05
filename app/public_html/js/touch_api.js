@@ -89,6 +89,8 @@ class TouchApi {
                     this.delegate.DrawIntersectionLines(lines.xLines, lines.yLines);
                     t1 = performance.now();
                     logArea.innerHTML += `\nDraw Intersection Lines time: ${t1 - t0}ms`;
+                    const windingNumbers = this.delegate.GetWindingNumbers(lines.xLines, lines.yLines, [point.offsetX, point.offsetY]);
+                    console.log(windingNumbers);
 
                 }
             }.bind(this), false);
