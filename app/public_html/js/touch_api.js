@@ -43,11 +43,6 @@ class TouchApi {
             'status': status
         };
 
-        if (event.touches && event.touches[0]) {
-            properties.offsetX = event.touches[0].pageX;
-            properties.offsetY = event.touches[0].pageY;
-            console.log(properties.offsetX + " " + properties.offsetY);
-        }
         return properties;
     }
 
