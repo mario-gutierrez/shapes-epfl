@@ -82,9 +82,13 @@ class TouchApi {
                     logArea.innerHTML = `\nFill-in points time: ${t1 - t0}ms`;
                 } else if (this.mode == Modes.Filling) {
                     let t0 = performance.now();
-                    this.delegate.FindIntersections(point.offsetX, point.offsetY);
+                    const lines = this.delegate.FindIntersections(point.offsetX, point.offsetY);
                     let t1 = performance.now();
                     logArea.innerHTML += `\nFind Intersections time: ${t1 - t0}ms`;
+                    t0 = performance.now();
+                    this.delegate.DrawIntersectionLines(lines.xLines, lines.yLines);
+                    t1 = performance.now();
+                    logArea.innerHTML += `\nDraw Intersection Lines time: ${t1 - t0}ms`;
 
                 }
             }.bind(this), false);
