@@ -82,7 +82,11 @@ class TouchApi {
                 if (this.mode == Modes.Drawing) {
                     this.delegate.AddPoint(point);
                 } else if (this.mode == Modes.Filling) {
-                    this.delegate.Fill(point);
+                    let t0 = performance.now();
+                    this.delegate.FindIntersections(point.offsetX, point.offsetY);
+                    let t1 = performance.now();
+                    logArea.innerHTML += `\nFind Intersections time: ${t1 - t0}ms`;
+
                 }
             }.bind(this), false);
         }
