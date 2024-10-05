@@ -214,16 +214,76 @@ class DrawingEngine {
         const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
         this.currentImageData = imageData.data;
 
-        const intersectionDelta = this.minLineWidth;
+        const intersectionDelta = this.minLineWidth * 2;
+        const xIntersections = [];
+        const yIntersections = [];
+
+        const xLines = [];
+        const yLines = [];
+
         for (let i = 0; i < this.points.length; i++) {
             const p = [this.points[i].offsetX, this.points[i].offsetY];
             if (x > 0 && Math.abs(p[0] - x) <= intersectionDelta) {
+                xIntersections.push(i);
                 this.DrawSquare(p, this.minLineWidth / 2, '#ff0000');
             }
 
             if (y > 0 && Math.abs(p[1] - y) <= intersectionDelta) {
+                yIntersections.push(i);
                 this.DrawSquare(p, this.minLineWidth / 2, '#ff0000');
             }
+        }
+
+        let currentLine = [];
+        for (let i = 0; i < xIntersections.length; i++) {
+            if (currentLine.length == 0) {
+                currentLine.push(xIntersections[i]);
+            } else if ((xIntersections[i] - xIntersections[i - 1]) > 1) {
+                currentLine.push(xIntersections[i - 1]);
+                xLines.push(currentLine);
+                currentLine = [xIntersections[i]];
+            }
+        }
+        if (currentLine.length == 1 && xIntersections[xIntersections.length - 1] < this.points.length) {
+            currentLine.push(xIntersections[xIntersections.length - 1]);
+        } else {
+            currentLine = [currentLine[0] - 1, currentLine[0]];
+        }
+        xLines.push(currentLine);
+
+        currentLine = [];
+        for (let i = 0; i < yIntersections.length; i++) {
+            if (currentLine.length == 0) {
+                currentLine.push(yIntersections[i]);
+            } else if ((yIntersections[i] - yIntersections[i - 1]) > 1) {
+                currentLine.push(yIntersections[i - 1]);
+                yLines.push(currentLine);
+                currentLine = [yIntersections[i]];
+            }
+        }
+        if (currentLine.length == 1 && yIntersections[yIntersections.length - 1] < this.points.length) {
+            currentLine.push(yIntersections[yIntersections.length - 1]);
+        } else {
+            currentLine = [currentLine[0] - 1, currentLine[0]];
+        }
+        yLines.push(currentLine);
+
+        for (let i = 0; i < xLines.length; i++) {
+            const line = xLines[i];
+            const p0 = [this.points[line[0]].offsetX, this.points[line[0]].offsetY];
+            const p1 = [this.points[line[1]].offsetX, this.points[line[1]].offsetY];
+
+            this.DrawVector(p1, p0, 0, 2, '#ff1000');
+            this.DrawSquare(p1, 5, '#ff1000');
+        }
+
+        for (let i = 0; i < yLines.length; i++) {
+            const line = yLines[i];
+            const p0 = [this.points[line[0]].offsetX, this.points[line[0]].offsetY];
+            const p1 = [this.points[line[1]].offsetX, this.points[line[1]].offsetY];
+
+            this.DrawVector(p1, p0, 0, 2, '#00ff10');
+            this.DrawSquare(p1, 5, '#00ff10');
         }
     }
 }
