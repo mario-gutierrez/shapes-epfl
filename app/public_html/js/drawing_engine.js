@@ -165,7 +165,6 @@ class DrawingEngine {
             if (distance >= step * 2) {
                 const dx = p1[0] - p0[0];
                 const dy = p1[1] - p0[1];
-                console.log(`${p0[0]},${p0[1]}   ${p1[0]},${p1[1]}`);
 
                 if (Math.abs(dx) > step * 2 && Math.abs(dy) > step * 2) {
                     const slope = dy / dx;
