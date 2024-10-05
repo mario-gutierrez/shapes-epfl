@@ -81,6 +81,10 @@ class TouchApi {
                 const point = this.GetPoint("end", e);
                 if (this.mode == Modes.Drawing) {
                     this.delegate.AddPoint(point);
+                    let t0 = performance.now();
+                    this.delegate.FillInDistantPoints();
+                    let t1 = performance.now();
+                    logArea.innerHTML = `\nFill-in points time: ${t1 - t0}ms`;
                 } else if (this.mode == Modes.Filling) {
                     let t0 = performance.now();
                     this.delegate.FindIntersections(point.offsetX, point.offsetY);
