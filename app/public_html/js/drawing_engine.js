@@ -165,7 +165,7 @@ class DrawingEngine {
         for (let i = 0; i < this.points.length - 1; i++) {
             const p0 = [this.points[i].offsetX, this.points[i].offsetY];
             const p1 = [this.points[i + 1].offsetX, this.points[i + 1].offsetY];
-            const step = this.minLineWidth;
+            const step = 2;
             const distance = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]);
             if (distance >= step * 2) {
                 const dx = p1[0] - p0[0];
@@ -225,7 +225,7 @@ class DrawingEngine {
         const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
         this.currentImageData = imageData.data;
 
-        const intersectionDelta = this.minLineWidth;
+        const intersectionDelta = 2;
         const xIntersections = [];
         const yIntersections = [];
 
