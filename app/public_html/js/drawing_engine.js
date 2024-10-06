@@ -13,6 +13,13 @@ class DrawingEngine {
         this.minLineWidth = 5
         this.maxDrawingMovement = 100;
         this.currentImageData = undefined;
+        this.ColorPaletteRGB = [
+            [239, 71, 111],
+            [255, 209, 102],
+            [6, 214, 160],
+            [17, 138, 178],
+            [7, 59, 76]
+        ];
     }
     RGBtoHexString(color) {
         const getHexString = (n) => {
