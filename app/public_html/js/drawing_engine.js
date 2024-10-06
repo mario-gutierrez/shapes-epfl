@@ -263,7 +263,7 @@ class DrawingEngine {
         }
         if (currentLine.length == 1 && xIntersections[xIntersections.length - 1] < this.points.length) {
             currentLine.push(xIntersections[xIntersections.length - 1]);
-        } else {
+        } else if (xIntersections.length > 1) {
             currentLine = [currentLine[0] - 1, currentLine[0]];
         }
         xLines.push(currentLine);
@@ -280,7 +280,7 @@ class DrawingEngine {
         }
         if (currentLine.length == 1 && yIntersections[yIntersections.length - 1] < this.points.length) {
             currentLine.push(yIntersections[yIntersections.length - 1]);
-        } else {
+        } else if (yIntersections.length > 1) {
             currentLine = [currentLine[0] - 1, currentLine[0]];
         }
         yLines.push(currentLine);
@@ -307,6 +307,8 @@ class DrawingEngine {
         }
     }
     GetWindingNumbers(xLines, yLines, point) {
+        if (!xLines || !yLines) { return [0, 0] };
+
         const lines = [xLines, yLines];
         const windingNumbers = [];
         for (let coord = 0; coord < lines.length; coord++) {
@@ -315,9 +317,13 @@ class DrawingEngine {
             const linePoints = [];
             for (let lineIndx = 0; lineIndx < lineSet.length; lineIndx++) {
                 const line = lineSet[lineIndx];
-                const p0 = [this.points[line[0]].offsetX, this.points[line[0]].offsetY];
-                const p1 = [this.points[line[1]].offsetX, this.points[line[1]].offsetY];
-                linePoints.push([p0, p1]);
+                try {
+                    const p0 = [this.points[line[0]].offsetX, this.points[line[0]].offsetY];
+                    const p1 = [this.points[line[1]].offsetX, this.points[line[1]].offsetY];
+                    linePoints.push([p0, p1]);
+                } catch (e) {
+                    console.error(e);
+                }
             }
 
             const coordToCompare = coord == 0 ? 1 : 0;
