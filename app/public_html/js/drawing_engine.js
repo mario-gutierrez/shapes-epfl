@@ -110,10 +110,8 @@ class DrawingEngine {
         const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
         this.currentImageData = imageData.data;
 
-        const p = [point.offsetX, point.offsetY];
-
         const pointsStack = [];
-        pointsStack.push(p);
+        pointsStack.push(point);
 
         while (pointsStack.length > 0) {
             const p = pointsStack.pop();
@@ -227,7 +225,7 @@ class DrawingEngine {
         const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
         this.currentImageData = imageData.data;
 
-        const intersectionDelta = this.minLineWidth * 2;
+        const intersectionDelta = this.minLineWidth;
         const xIntersections = [];
         const yIntersections = [];
 
