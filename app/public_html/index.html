@@ -11,8 +11,8 @@
       border: 2px solid gray;
       margin: 10px;
       padding: 0;
-      width: 90%;
-      height: 75vh;
+      width: 98%;
+      height: 95vh;
     }
 
     button {
@@ -37,7 +37,7 @@
 <body>
   <canvas id="canvas"></canvas>
   <br>
-  <table>
+  <!-- <table>
     <tr>
       <td><button id="logButton" onclick="toggleLog()">Start Log</button></td>
       <td><button id="fillButton">Fill</button></td>
@@ -45,7 +45,7 @@
     <tr>
       <td><textarea id="logArea" cols="120" rows="3" disabled></textarea></textarea></td>
     </tr>
-  </table>
+  </table> -->
 </body>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -55,9 +55,9 @@
 <script type="text/javascript">
   const dpi = 264; //iPad Pro 12.9 dpi resolution
   const canvas = document.getElementById("canvas");
-  const ws = new WSocket("log_msg", (data) => { });
+  const ws = undefined// WSocket("log_msg", (data) => { });
   let isLogging = false;
-  const logButton = document.querySelector("#logButton");
+  //const logButton = document.querySelector("#logButton");
   let drawingEngine;
 
   function toggleLog() {
@@ -96,10 +96,6 @@
       }
     }
   }
-
-
-
-
 
   window.onload = setup;
   window.onresize = resizeCanvas;

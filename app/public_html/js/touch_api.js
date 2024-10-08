@@ -79,7 +79,7 @@ class TouchApi {
                     let t0 = performance.now();
                     this.delegate.FillInDistantPoints();
                     let t1 = performance.now();
-                    logArea.innerHTML = `\nFill-in points time: ${t1 - t0}ms`;
+                    //logArea.innerHTML = `\nFill-in points time: ${t1 - t0}ms`;
                     this.delegate.FillInCanvas();
                 } else if (this.mode == Modes.Filling) {
                     const manualFillMode = true;

@@ -80,7 +80,7 @@ class DrawingEngine {
         if (this.websocket) {
             this.websocket.Send(point);
         }
-        logArea.innerHTML = JSON.stringify(point);
+        //logArea.innerHTML = JSON.stringify(point);
     }
     CoordinatesAreWithinCanvas(x, y) {
         return (x >= 0 && x < this.canvas.width && y >= 0 && y < this.canvas.height);
@@ -347,13 +347,13 @@ class DrawingEngine {
         let t0 = performance.now();
         const lines = this.FindIntersections(p[0], p[1]);
         let t1 = performance.now();
-        logArea.innerHTML += `\nFind Intersections time: ${t1 - t0}ms`;
+        //logArea.innerHTML += `\nFind Intersections time: ${t1 - t0}ms`;
         let showIntersectionLines = false;
         if (showIntersectionLines) {
             t0 = performance.now();
             this.DrawIntersectionLines(lines.xLines, lines.yLines);
             t1 = performance.now();
-            logArea.innerHTML += `\nDraw Intersection Lines time: ${t1 - t0}ms`;
+            //logArea.innerHTML += `\nDraw Intersection Lines time: ${t1 - t0}ms`;
         }
         const windingNumbers = this.GetWindingNumbers(lines.xLines, lines.yLines, p);
         console.log(windingNumbers);
@@ -396,7 +396,7 @@ class DrawingEngine {
 
         this.UpdateImageData();
         let t1 = performance.now();
-        logArea.innerHTML += `\nFull Canvas Coloring time: ${t1 - t0}ms`;
+        //logArea.innerHTML += `\nFull Canvas Coloring time: ${t1 - t0}ms`;
     }
     LoadImageData() {
         this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
