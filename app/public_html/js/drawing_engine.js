@@ -6,7 +6,8 @@ class DrawingEngine {
         this.websocket = websocket;
         this.canvas = canvas;
         this.previousPoint = undefined;
-        this.lineColorRGB = [10, 10, 10, 255];
+        this.lineAlphaValue = 250;
+        this.lineColorRGB = [1, 1, 1, this.lineAlphaValue];
         this.lineColor = this.RGBtoHexString(this.lineColorRGB);
         this.colorSimilarityThreshold = 10;
         this.maxLineWidth = 10;
@@ -14,11 +15,11 @@ class DrawingEngine {
         this.maxDrawingMovement = 100;
         this.currentImageData = undefined;
         this.ColorPaletteRGB = [
-            [239, 71, 111],
-            [255, 209, 102],
-            [6, 214, 160],
-            [17, 138, 178],
-            [7, 59, 76]
+            [239, 71, 111, 255],
+            [255, 209, 102, 255],
+            [6, 214, 160, 255],
+            [17, 138, 178, 255],
+            [7, 59, 76, 255]
         ];
     }
     RGBtoHexString(color) {
@@ -79,19 +80,28 @@ class DrawingEngine {
         }
         logArea.innerHTML = JSON.stringify(point);
     }
+    CoordinatesAreWithinCanvas(x, y) {
+        return (x >= 0 && x < this.canvas.width && y >= 0 && y < this.canvas.height);
+    }
     GetColorIndicesForCoord = (p) => {
         const x = p[0];
         const y = p[1];
-        if (x > 0 && x < this.canvas.width && y > 0 && y < this.canvas.height) {
+        if (this.CoordinatesAreWithinCanvas(x, y)) {
             const i = y * (this.canvas.width * 4) + x * 4;
             return [i, i + 1, i + 2, i + 3];
         }
         //console.error(`Coordinates out of image bounds: [${x},${y}]`);
         return [];
     }
-    ColorPixelIs(p, color) {
-        const indices = this.GetColorIndicesForCoord(p);
-        if (indices.length == 4) {
+    ShouldFillPixel(indices, color) {
+        if (indices.length === 4) {
+            const alpha = this.currentImageData[indices[3]];
+            if (alpha === 0) {
+                return 0; // color needs to be filled, it was not painted before
+            }
+            if (alpha <= this.lineAlphaValue) {
+                return 1; // pixel should not be filled, it's part of a line
+            }
             const pixelColor = [this.currentImageData[indices[0]], this.currentImageData[indices[1]], this.currentImageData[indices[2]]];
 
             const dist = Math.hypot(pixelColor[0] - color[0], pixelColor[1] - color[1], pixelColor[2] - color[2]);
@@ -103,7 +113,7 @@ class DrawingEngine {
         console.error('color pixel is undefined');
         return 2;
     }
-    Fill(point, color = [0, 128, 250]) {
+    Fill(point, color) {
         const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
         this.currentImageData = imageData.data;
 
@@ -112,50 +122,47 @@ class DrawingEngine {
 
         while (pointsStack.length > 0) {
             const p = pointsStack.pop();
-            if (this.FillPixel(p, color)) {
+            const pixelInfo = this.FillPixel(p, color);
+            if (pixelInfo.shouldBeFilled) {
 
-                let newPoint = [p[0], p[1] - 1];
-                if (this.GetColorIndicesForCoord(newPoint).length == 4) {
-                    pointsStack.push(newPoint);
+                let x = p[0];
+                let y = p[1] - 1;
+                if (this.CoordinatesAreWithinCanvas(x, y)) {
+                    pointsStack.push([x, y]);
+                }
+                x = p[0];
+                y = p[1] + 1;
+                if (this.CoordinatesAreWithinCanvas(x, y)) {
+                    pointsStack.push([x, y]);
                 }
 
-                newPoint = [p[0], p[1] + 1];
-                if (this.GetColorIndicesForCoord(newPoint).length == 4) {
-                    pointsStack.push(newPoint);
+                x = p[0] - 1;
+                y = p[1];
+                if (this.CoordinatesAreWithinCanvas(x, y)) {
+                    pointsStack.push([x, y]);
                 }
 
-                newPoint = [p[0] - 1, p[1]];
-                if (this.GetColorIndicesForCoord(newPoint).length == 4) {
-                    pointsStack.push(newPoint);
-                }
-
-                newPoint = [p[0] + 1, p[1]];
-                if (this.GetColorIndicesForCoord(newPoint).length == 4) {
-                    pointsStack.push(newPoint);
+                x = p[0] + 1;
+                y = p[1];
+                if (this.CoordinatesAreWithinCanvas(x, y)) {
+                    pointsStack.push([x, y]);
                 }
             }
         }
 
         this.context.putImageData(imageData, 0, 0);
     }
-    PixelShouldBeFilled(newPoint, color) {
-        if (this.ColorPixelIs(newPoint, this.lineColorRGB) === 0 &&
-            this.ColorPixelIs(newPoint, color) === 0) {
-            return true;
-        }
-        return false;
-    }
     FillPixel(point, color) {
-        if (this.PixelShouldBeFilled(point, color)) {
-            const indices = this.GetColorIndicesForCoord(point);
-            //console.log(`[${point[0]},${point[1]}]`);
+        let shouldBeFilled = false;
+        const indices = this.GetColorIndicesForCoord(point);
+        if (this.ShouldFillPixel(indices, color) === 0) {
             this.currentImageData[indices[0]] = color[0];
             this.currentImageData[indices[1]] = color[1];
             this.currentImageData[indices[2]] = color[2];
             this.currentImageData[indices[3]] = 255;
-            return true;
+            shouldBeFilled = true;
         }
-        return false;
+        return { shouldBeFilled, indices };
     }
 
     FillInDistantPoints(drawAddedPoints = false) {
