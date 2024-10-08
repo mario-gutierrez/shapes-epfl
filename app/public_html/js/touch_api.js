@@ -80,24 +80,15 @@ class TouchApi {
                     this.delegate.FillInDistantPoints();
                     let t1 = performance.now();
                     logArea.innerHTML = `\nFill-in points time: ${t1 - t0}ms`;
+                    this.delegate.FillInCanvas();
                 } else if (this.mode == Modes.Filling) {
-                    const p = [point.offsetX, point.offsetY];
-                    let t0 = performance.now();
-                    const lines = this.delegate.FindIntersections(p[0], p[1]);
-                    let t1 = performance.now();
-                    logArea.innerHTML += `\nFind Intersections time: ${t1 - t0}ms`;
-                    let showIntersectionLines = false;
-                    if (showIntersectionLines) {
-                        t0 = performance.now();
-                        this.delegate.DrawIntersectionLines(lines.xLines, lines.yLines);
-                        t1 = performance.now();
-                        logArea.innerHTML += `\nDraw Intersection Lines time: ${t1 - t0}ms`;
+                    const manualFillMode = true;
+                    if (manualFillMode) {
+                        const p = [point.offsetX, point.offsetY];
+                        this.delegate.LoadImageData();
+                        this.delegate.FillInArea(p);
+                        this.delegate.UpdateImageData();
                     }
-                    const windingNumbers = this.delegate.GetWindingNumbers(lines.xLines, lines.yLines, p);
-                    console.log(windingNumbers);
-                    const colorIndex = Math.abs(windingNumbers[0]) % this.delegate.ColorPaletteRGB.length;
-                    this.delegate.Fill(p, this.delegate.ColorPaletteRGB[colorIndex]);
-
                 }
             }.bind(this), false);
         }
