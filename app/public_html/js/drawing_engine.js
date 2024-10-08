@@ -1,6 +1,7 @@
 class DrawingEngine {
     constructor(canvas, websocket) {
         this.context = canvas.getContext('2d', { willReadFrequently: true });
+        this.context.anti
         this.strokes = [];
         this.points = [];
         this.websocket = websocket;
@@ -13,6 +14,7 @@ class DrawingEngine {
         this.maxLineWidth = 10;
         this.minLineWidth = 5
         this.maxDrawingMovement = 100;
+        this.imageData = undefined;
         this.currentImageData = undefined;
         this.ColorPaletteRGB = [
             [239, 71, 111, 255],
@@ -97,29 +99,30 @@ class DrawingEngine {
         if (indices.length === 4) {
             const alpha = this.currentImageData[indices[3]];
             if (alpha === 0) {
-                return 0; // color needs to be filled, it was not painted before
+                return 1; // color needs to be filled, it was not painted before
             }
-            if (alpha <= this.lineAlphaValue) {
-                return 1; // pixel should not be filled, it's part of a line
-            }
+            // if (alpha <= this.lineAlphaValue) {
+            //     return 0; // pixel should not be filled, it's part of a line
+            // }
             const pixelColor = [this.currentImageData[indices[0]], this.currentImageData[indices[1]], this.currentImageData[indices[2]]];
 
-            const dist = Math.hypot(pixelColor[0] - color[0], pixelColor[1] - color[1], pixelColor[2] - color[2]);
-            if (dist < this.colorSimilarityThreshold) {
-                return 1;
+            const distToLineColor = Math.hypot(pixelColor[0] - this.lineColorRGB[0], pixelColor[1] - this.lineColorRGB[1], pixelColor[2] - this.lineColorRGB[2]);
+            if (distToLineColor < this.colorSimilarityThreshold) {
+                return 0;
             }
-            return 0;
+            const distToColor = Math.hypot(pixelColor[0] - color[0], pixelColor[1] - color[1], pixelColor[2] - color[2]);
+            if (distToColor < this.colorSimilarityThreshold) {
+                return 0;
+            }
+
+            return 1;
         }
         console.error('color pixel is undefined');
         return 2;
     }
     Fill(point, color) {
-        const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
-        this.currentImageData = imageData.data;
-
         const pointsStack = [];
         pointsStack.push(point);
-
         while (pointsStack.length > 0) {
             const p = pointsStack.pop();
             const pixelInfo = this.FillPixel(p, color);
@@ -149,13 +152,11 @@ class DrawingEngine {
                 }
             }
         }
-
-        this.context.putImageData(imageData, 0, 0);
     }
     FillPixel(point, color) {
         let shouldBeFilled = false;
         const indices = this.GetColorIndicesForCoord(point);
-        if (this.ShouldFillPixel(indices, color) === 0) {
+        if (this.ShouldFillPixel(indices, color) === 1) {
             this.currentImageData[indices[0]] = color[0];
             this.currentImageData[indices[1]] = color[1];
             this.currentImageData[indices[2]] = color[2];
@@ -226,9 +227,6 @@ class DrawingEngine {
         }
     }
     FindIntersections(x, y, drawIntersectionPoints = false) {
-        const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
-        this.currentImageData = imageData.data;
-
         const intersectionDelta = 2;
         const xIntersections = [];
         const yIntersections = [];
@@ -344,5 +342,67 @@ class DrawingEngine {
             windingNumbers.push(windingNumber);
         }
         return windingNumbers;
+    }
+    FillInArea(p) {
+        let t0 = performance.now();
+        const lines = this.FindIntersections(p[0], p[1]);
+        let t1 = performance.now();
+        logArea.innerHTML += `\nFind Intersections time: ${t1 - t0}ms`;
+        let showIntersectionLines = false;
+        if (showIntersectionLines) {
+            t0 = performance.now();
+            this.DrawIntersectionLines(lines.xLines, lines.yLines);
+            t1 = performance.now();
+            logArea.innerHTML += `\nDraw Intersection Lines time: ${t1 - t0}ms`;
+        }
+        const windingNumbers = this.GetWindingNumbers(lines.xLines, lines.yLines, p);
+        console.log(windingNumbers);
+        const colorIndex = Math.abs(windingNumbers[1]) % this.ColorPaletteRGB.length;
+        this.Fill(p, this.ColorPaletteRGB[colorIndex]);
+    }
+    FillInCanvas() {
+        let t0 = performance.now();
+        this.LoadImageData();
+        const halfWidth = Math.round(this.canvas.width / 2);
+        const halfHeight = Math.round(this.canvas.height / 2);
+
+        const tryToFillArea = (x, y, yIndex) => {
+            const alpha = yIndex + x * 4 + 3;
+            if (this.currentImageData[alpha] === 0) {
+                this.FillInArea([x, y]);
+            }
+        }
+
+        const doVerticalScan = (x) => {
+            let yIndex = this.canvas.width * 4 * halfHeight;
+            for (let y = halfHeight; y < this.canvas.height; y++) {
+                tryToFillArea(x, y, yIndex);
+                yIndex += this.canvas.width * 4;
+            }
+            yIndex = this.canvas.width * 4 * (halfHeight - 1);
+            for (let y = halfHeight - 1; y >= 0; y--) {
+                tryToFillArea(x, y, yIndex);
+                yIndex -= this.canvas.width * 4;
+            }
+        }
+
+        for (let x = halfWidth; x < this.canvas.width; x++) {
+            doVerticalScan(x);
+        }
+
+        for (let x = halfWidth; x >= 0; x--) {
+            doVerticalScan(x);
+        }
+
+        this.UpdateImageData();
+        let t1 = performance.now();
+        logArea.innerHTML += `\nFull Canvas Coloring time: ${t1 - t0}ms`;
+    }
+    LoadImageData() {
+        this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        this.currentImageData = this.imageData.data;
+    }
+    UpdateImageData() {
+        this.context.putImageData(this.imageData, 0, 0);
     }
 }
