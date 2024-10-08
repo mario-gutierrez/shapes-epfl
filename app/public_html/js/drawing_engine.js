@@ -69,13 +69,10 @@ class DrawingEngine {
         }
 
         const screenCoords = [point.offsetX, point.offsetY];
-        let speed = Math.min(Math.hypot(point.movementX, point.movementY), this.maxDrawingMovement);
-        const widthBasedOnSpeed = Math.min(Math.round((1.0 - (speed / this.maxDrawingMovement)) * this.maxLineWidth), this.minLineWidth);
-
         if (this.previousPoint) {
-            this.DrawVector(screenCoords, [this.previousPoint.offsetX, this.previousPoint.offsetY], 0, widthBasedOnSpeed, color);
+            this.DrawVector(screenCoords, [this.previousPoint.offsetX, this.previousPoint.offsetY], 0, this.minLineWidth, color);
         }
-        this.DrawCircle(screenCoords, widthBasedOnSpeed, color);
+        this.DrawCircle(screenCoords, this.minLineWidth, color);
         this.previousPoint = point;
         if (this.websocket) {
             this.websocket.Send(point);
