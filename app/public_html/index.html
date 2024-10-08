@@ -82,6 +82,8 @@
   function setup() {
     resizeCanvas();
     drawingEngine = new DrawingEngine(canvas, ws);
+    //clear setting alpha to 0
+    drawingEngine.DrawSquare([canvas.clientWidth / 2, canvas.clientHeight / 2], Math.max(canvas.clientWidth, canvas.clientHeight), "#ffffff00");
     const touchHandler = new TouchApi(canvas, drawingEngine, dpi);
 
     fillButton.onclick = event => {
