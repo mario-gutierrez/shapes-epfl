@@ -56,16 +56,16 @@ class DrawingEngine {
 
         this.context.stroke();
     }
-    AddPoint(point, color = this.lineColor) {
-        if (point.status === 'error') return;
+    AddPoint(point, status, color = this.lineColor) {
+        if (status === 'error') return;
         this.points.push(point);
 
-        if (point.status === 'end') {
+        if (status === 'end') {
             this.websocket.Send(this.points);
             this.websocket.Send({ ctrl: "close_log" });
         }
 
-        if (point.status === 'start') {
+        if (status === 'start') {
             this.points = [];
             this.previousPoint = undefined;
             this.websocket.Send({ ctrl: "new_log" });
