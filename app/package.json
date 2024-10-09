@@ -16,7 +16,6 @@
   "dependencies": {
     "express": "^4.21.0",
     "fs": "^0.0.1-security",
-    "ip": "^1.1.8",
     "line-reader": "^0.4.0",
     "socket.io": "^4.8.0"
   }

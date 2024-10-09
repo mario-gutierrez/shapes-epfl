@@ -5,13 +5,13 @@ const io = require('socket.io')(http);
 const FileHandler = require("./file_handler.js");
 const Logger = require("./data_logger");
 const WebsocketServer = require("./ws_server");
-const IP = require('ip');
-
+const httpPort = 3000;
+const wsPort = 3030;
 const fileHandlerTablet = new FileHandler();
 const filePrefix = "stylus_";
 const loggerTablet = new Logger(fileHandlerTablet, filePrefix);
 
-const wsServer = new WebsocketServer(3030, (data) => {
+const wsServer = new WebsocketServer(wsPort, (data) => {
     loggerOculus.logData(data);
 });
 
@@ -57,6 +57,17 @@ io.on('connection', (socket) => {
     });
 });
 
-http.listen(3000, () => {
-    console.log('Stylus logger running on ' + IP.address() + ' 3000');
+http.listen(httpPort, () => {
+    var os = require('os');
+    var ip = '0.0.0.0';
+    var ips = os.networkInterfaces();
+    Object
+        .keys(ips)
+        .forEach(function (_interface) {
+            ips[_interface]
+                .forEach(function (_dev) {
+                    if (_dev.family === 'IPv4' && !_dev.internal) ip = _dev.address
+                })
+        });
+    console.log(`Server running on ${ip}:${httpPort}`);
 });
