@@ -56,23 +56,7 @@
   const dpi = 264; //iPad Pro 12.9 dpi resolution
   const canvas = document.getElementById("canvas");
   const ws = new WSocket("log_msg", (data) => { });
-  let isLogging = false;
-  //const logButton = document.querySelector("#logButton");
   let drawingEngine;
-
-  function toggleLog() {
-    if (isLogging) {
-      ws.Send({ ctrl: "close_log" });
-      logButton.innerHTML = "Start Log";
-      logButton.style.background = '#4CAF50';
-    } else {
-      drawingEngine.DrawSquare([canvas.clientWidth / 2, canvas.clientHeight / 2], Math.max(canvas.clientWidth, canvas.clientHeight), "#ffffff");
-      ws.Send({ ctrl: "new_log" });
-      logButton.innerHTML = "Stop Log";
-      logButton.style.background = '#F44336';
-    }
-    isLogging = !isLogging;
-  }
 
   function resizeCanvas() {
     canvas.width = canvas.clientWidth;
@@ -85,16 +69,6 @@
     //clear setting alpha to 0
     drawingEngine.DrawSquare([canvas.clientWidth / 2, canvas.clientHeight / 2], Math.max(canvas.clientWidth, canvas.clientHeight), "#ffffff00");
     const touchHandler = new TouchApi(canvas, drawingEngine, dpi);
-
-    // fillButton.onclick = event => {
-    //   if (touchHandler.mode == Modes.Drawing) {
-    //     touchHandler.mode = Modes.Filling;
-    //     fillButton.style.background = '#00AAFF';
-    //   } else if (touchHandler.mode == Modes.Filling) {
-    //     touchHandler.mode = Modes.Drawing;
-    //     fillButton.style.background = '#4CAF50';
-    //   }
-    // }
   }
 
   window.onload = setup;
