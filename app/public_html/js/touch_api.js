@@ -16,14 +16,13 @@ class TouchApi {
         // alert("1 pixel = " + this.pixelSize + "m  1cm = " + (dpi / (100.0 * inchInMeters)) / window.devicePixelRatio + " pixels");
     }
 
-    GetPoint(status, event) {
-        const timestamp = Math.round(performance.now());
+    GetPoint(event) {
+        const ts = Math.round(performance.now());
 
         // Extract properties from the event object
         let properties = {
-            timestamp,
-            'p': [event.offsetX, event.offsetY],
-            'status': status
+            ts,
+            'p': [event.offsetX, event.offsetY]
         };
 
         return properties;
@@ -33,10 +32,10 @@ class TouchApi {
         for (const ev of ["touchstart", "mousedown"]) {
             this.canvas.addEventListener(ev, function (e) {
                 e.preventDefault();
-                const point = this.GetPoint("start", e);
+                const point = this.GetPoint(e);
                 this.isMousedown = true;
                 if (this.mode == Modes.Drawing) {
-                    this.delegate.AddPoint(point);
+                    this.delegate.AddPoint(point, "start");
                 }
             }.bind(this), false);
         }
@@ -46,8 +45,8 @@ class TouchApi {
                 if (!this.isMousedown) return
                 e.preventDefault();
                 if (this.mode == Modes.Drawing) {
-                    const point = this.GetPoint("move", e);
-                    this.delegate.AddPoint(point);
+                    const point = this.GetPoint(e);
+                    this.delegate.AddPoint(point, "move");
                 }
             }.bind(this), false);
         }
@@ -56,9 +55,9 @@ class TouchApi {
             this.canvas.addEventListener(ev, function (e) {
                 e.preventDefault();
                 this.isMousedown = false;
-                const point = this.GetPoint("end", e);
+                const point = this.GetPoint(e);
                 if (this.mode == Modes.Drawing) {
-                    this.delegate.AddPoint(point);
+                    this.delegate.AddPoint(point, "end");
                     let t0 = performance.now();
                     this.delegate.FillInDistantPoints();
                     let t1 = performance.now();
