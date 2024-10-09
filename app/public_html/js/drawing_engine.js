@@ -1,8 +1,6 @@
 class DrawingEngine {
     constructor(canvas, websocket) {
         this.context = canvas.getContext('2d', { willReadFrequently: true });
-        this.context.anti
-        this.strokes = [];
         this.points = [];
         this.websocket = websocket;
         this.canvas = canvas;
@@ -63,12 +61,14 @@ class DrawingEngine {
         this.points.push(point);
 
         if (point.status === 'end') {
-            this.strokes.push(this.points);
+            this.websocket.Send(this.points);
+            this.websocket.Send({ ctrl: "close_log" });
         }
 
         if (point.status === 'start') {
             this.points = [];
             this.previousPoint = undefined;
+            this.websocket.Send({ ctrl: "new_log" });
         }
 
         const screenCoords = point.p;
@@ -77,9 +77,6 @@ class DrawingEngine {
         }
         this.DrawCircle(screenCoords, this.minLineWidth, color);
         this.previousPoint = point;
-        if (this.websocket) {
-            this.websocket.Send(point);
-        }
         //logArea.innerHTML = JSON.stringify(point);
     }
     CoordinatesAreWithinCanvas(x, y) {
