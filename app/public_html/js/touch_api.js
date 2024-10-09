@@ -22,24 +22,7 @@ class TouchApi {
         // Extract properties from the event object
         let properties = {
             timestamp,
-            'pointerId': event.pointerId,
-            'pointerType': event.pointerType,
-            'isPrimary': event.isPrimary,
-            'width': event.width,
-            'height': event.height,
-            'pressure': event.pressure,
-            'tiltX': event.tiltX,
-            'tiltY': event.tiltY,
-            'tangentialPressure': event.tangentialPressure,
-            'twist': event.twist,
-            'movementX': event.movementX,
-            'movementY': event.movementY,
-            'clientX': event.clientX,
-            'clientY': event.clientY,
-            'screenX': event.screenX,
-            'screenY': event.screenY,
-            'offsetX': event.offsetX,
-            'offsetY': event.offsetY,
+            'p': [event.offsetX, event.offsetY],
             'status': status
         };
 
@@ -84,9 +67,8 @@ class TouchApi {
                 } else if (this.mode == Modes.Filling) {
                     const manualFillMode = true;
                     if (manualFillMode) {
-                        const p = [point.offsetX, point.offsetY];
                         this.delegate.LoadImageData();
-                        this.delegate.FillInArea(p);
+                        this.delegate.FillInArea(point.p);
                         this.delegate.UpdateImageData();
                     }
                 }
