@@ -71,9 +71,9 @@ class DrawingEngine {
             this.previousPoint = undefined;
         }
 
-        const screenCoords = [point.offsetX, point.offsetY];
+        const screenCoords = point.p;
         if (this.previousPoint) {
-            this.DrawVector(screenCoords, [this.previousPoint.offsetX, this.previousPoint.offsetY], 0, this.minLineWidth, color);
+            this.DrawVector(screenCoords, this.previousPoint.p, 0, this.minLineWidth, color);
         }
         this.DrawCircle(screenCoords, this.minLineWidth, color);
         this.previousPoint = point;
@@ -168,8 +168,8 @@ class DrawingEngine {
 
     FillInDistantPoints(drawAddedPoints = false) {
         for (let i = 0; i < this.points.length - 1; i++) {
-            const p0 = [this.points[i].offsetX, this.points[i].offsetY];
-            const p1 = [this.points[i + 1].offsetX, this.points[i + 1].offsetY];
+            const p0 = this.points[i].p;
+            const p1 = this.points[i + 1].p;
             const step = 2;
             const distance = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]);
             if (distance >= step * 2) {
@@ -183,11 +183,11 @@ class DrawingEngine {
                         const steps = Math.round(Math.abs(dx) / step);
                         for (let j = 1; j <= steps; j++) {
                             const x = (dx > 0 ? 1 : -1) * step * j;
-                            const p = { offsetX: p0[0] + x, offsetY: Math.floor(p0[1] + x * slope) };
+                            const p = { p: [p0[0] + x, Math.floor(p0[1] + x * slope)] };
                             newIndex = i + j;
                             this.points.splice(newIndex, 0, p);
                             if (drawAddedPoints) {
-                                this.DrawSquare([p.offsetX, p.offsetY], step / 2, '#00ff00');
+                                this.DrawSquare(p.p, step / 2, '#00ff00');
                             }
                         }
                         i = newIndex;
@@ -199,11 +199,11 @@ class DrawingEngine {
                     const deltaX = dx / steps;
                     for (let j = 1; j < steps; j++) {
                         const y = (dy > 0 ? 1 : -1) * step * j;
-                        const p = { offsetX: Math.round(p0[0] + deltaX * j), offsetY: p0[1] + y };
+                        const p = { p: [Math.round(p0[0] + deltaX * j), p0[1] + y] };
                         newIndex = i + j;
                         this.points.splice(newIndex, 0, p);
                         if (drawAddedPoints) {
-                            this.DrawSquare([p.offsetX, p.offsetY], step / 2, '#00ff00');
+                            this.DrawSquare(p.p, step / 2, '#00ff00');
                         }
                     }
                     i = newIndex;
@@ -214,11 +214,11 @@ class DrawingEngine {
                     const deltaY = dy / steps;
                     for (let j = 1; j < steps; j++) {
                         const x = (dx > 0 ? 1 : -1) * step * j;
-                        const p = { offsetX: p0[0] + x, offsetY: Math.round(p0[1] + deltaY * j) };
+                        const p = { p: [p0[0] + x, Math.round(p0[1] + deltaY * j)] };
                         newIndex = i + j;
                         this.points.splice(newIndex, 0, p);
                         if (drawAddedPoints) {
-                            this.DrawSquare([p.offsetX, p.offsetY], step / 2, '#00ff00');
+                            this.DrawSquare(p.p, step / 2, '#00ff00');
                         }
                     }
                     i = newIndex;
@@ -235,7 +235,7 @@ class DrawingEngine {
         const yLines = [];
 
         for (let i = 0; i < this.points.length; i++) {
-            const p = [this.points[i].offsetX, this.points[i].offsetY];
+            const p = this.points[i].p;
             if (x > 0 && Math.abs(p[0] - x) <= intersectionDelta) {
                 xIntersections.push(i);
                 if (drawIntersectionPoints) {
@@ -290,8 +290,8 @@ class DrawingEngine {
     DrawIntersectionLines(xLines, yLines) {
         for (let i = 0; i < xLines.length; i++) {
             const line = xLines[i];
-            const p0 = [this.points[line[0]].offsetX, this.points[line[0]].offsetY];
-            const p1 = [this.points[line[1]].offsetX, this.points[line[1]].offsetY];
+            const p0 = this.points[line[0]].p;
+            const p1 = this.points[line[1]].p;
 
             this.DrawVector(p1, p0, 0, 2, '#ff1000');
             this.DrawSquare(p1, 5, '#ff1000');
@@ -299,8 +299,8 @@ class DrawingEngine {
 
         for (let i = 0; i < yLines.length; i++) {
             const line = yLines[i];
-            const p0 = [this.points[line[0]].offsetX, this.points[line[0]].offsetY];
-            const p1 = [this.points[line[1]].offsetX, this.points[line[1]].offsetY];
+            const p0 = this.points[line[0]].p;
+            const p1 = this.points[line[1]].p;
 
             this.DrawVector(p1, p0, 0, 2, '#00ff10');
             this.DrawSquare(p1, 5, '#00ff10');
@@ -318,8 +318,8 @@ class DrawingEngine {
             for (let lineIndx = 0; lineIndx < lineSet.length; lineIndx++) {
                 const line = lineSet[lineIndx];
                 try {
-                    const p0 = [this.points[line[0]].offsetX, this.points[line[0]].offsetY];
-                    const p1 = [this.points[line[1]].offsetX, this.points[line[1]].offsetY];
+                    const p0 = this.points[line[0]].p;
+                    const p1 = this.points[line[1]].p;
                     linePoints.push([p0, p1]);
                 } catch (e) {
                     console.error(e);
