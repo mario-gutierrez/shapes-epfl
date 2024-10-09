@@ -167,7 +167,7 @@ class DrawingEngine {
         for (let i = 0; i < this.points.length - 1; i++) {
             const p0 = this.points[i].p;
             const p1 = this.points[i + 1].p;
-            const step = 2;
+            const step = 6;
             const distance = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]);
             if (distance >= step * 2) {
                 const dx = p1[0] - p0[0];
@@ -224,7 +224,7 @@ class DrawingEngine {
         }
     }
     FindIntersections(x, y, drawIntersectionPoints = false) {
-        const intersectionDelta = 2;
+        const intersectionDelta = 3;
         const xIntersections = [];
         const yIntersections = [];
 
@@ -331,7 +331,7 @@ class DrawingEngine {
             for (let lineIndx = 0; lineIndx < linePoints.length; lineIndx++) {
                 const lineCoords = linePoints[lineIndx];
                 if (point[coordToCompare] > lineCoords[0][coordToCompare]) {
-                    windingNumber += lineCoords[0][coord] < lineCoords[1][coord] ? 1 : -1;
+                    windingNumber += lineCoords[0][coord] <= lineCoords[1][coord] ? 1 : -1;
                 } else {
                     break;
                 }
@@ -345,17 +345,19 @@ class DrawingEngine {
         const lines = this.FindIntersections(p[0], p[1]);
         let t1 = performance.now();
         //logArea.innerHTML += `\nFind Intersections time: ${t1 - t0}ms`;
+        const windingNumbers = this.GetWindingNumbers(lines.xLines, lines.yLines, p);
+        console.log(windingNumbers);
+        const colorIndex = (windingNumbers[0] >= 0 ? windingNumbers[0] : (this.ColorPaletteRGB.length + windingNumbers[0])) % this.ColorPaletteRGB.length;
+        this.Fill(p, this.ColorPaletteRGB[colorIndex]);
+
         let showIntersectionLines = false;
         if (showIntersectionLines) {
             t0 = performance.now();
             this.DrawIntersectionLines(lines.xLines, lines.yLines);
+            this.DrawCircle(p, 10, this.RGBtoHexString(this.ColorPaletteRGB[colorIndex]));
             t1 = performance.now();
             //logArea.innerHTML += `\nDraw Intersection Lines time: ${t1 - t0}ms`;
         }
-        const windingNumbers = this.GetWindingNumbers(lines.xLines, lines.yLines, p);
-        console.log(windingNumbers);
-        const colorIndex = Math.abs(windingNumbers[1]) % this.ColorPaletteRGB.length;
-        this.Fill(p, this.ColorPaletteRGB[colorIndex]);
     }
     FillInCanvas() {
         let t0 = performance.now();
