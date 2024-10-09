@@ -2,8 +2,8 @@ class FileHandler {
     constructor() {
         this.LogSettings = {
             pathToLogFile: "public_html/data/",
-            fileName: "stylus_",
-            fileExtension: ".csv",
+            fileName: "shapes_",
+            fileExtension: ".json",
             currentSessionId: "-"
         };
         this.stream = null;
