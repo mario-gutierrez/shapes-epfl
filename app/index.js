@@ -8,7 +8,7 @@ const WebsocketServer = require("./ws_server");
 const httpPort = 3000;
 const wsPort = 3030;
 const fileHandlerTablet = new FileHandler();
-const filePrefix = "stylus_";
+const filePrefix = "shapes_";
 const loggerTablet = new Logger(fileHandlerTablet, filePrefix);
 
 const wsServer = new WebsocketServer(wsPort, (data) => {
