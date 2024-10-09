@@ -22,7 +22,6 @@ const fs = require('fs');
 
 function getFilesList(socket) {
     let tabletFiles = [];
-    let oculusFiles = [];
     fs.readdir(dataFolder, (err, files) => {
         files.forEach(file => {
             if (file.includes(filePrefix)) {
