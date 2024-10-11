@@ -67,14 +67,18 @@ class DrawingEngine {
         this.points.push(point);
 
         if (status === 'end') {
-            this.websocket.Send(this.points);
-            this.websocket.Send({ ctrl: "close_log" });
+            if (!point.isFromLogFile) {
+                this.websocket.Send(this.points);
+                this.websocket.Send({ ctrl: "close_log" });
+            }
         }
 
         if (status === 'start') {
             this.points = [];
             this.previousPoint = undefined;
-            this.websocket.Send({ ctrl: "new_log" });
+            if (!point.isFromLogFile) {
+                this.websocket.Send({ ctrl: "new_log" });
+            }
         }
 
         const screenCoords = point.p;
