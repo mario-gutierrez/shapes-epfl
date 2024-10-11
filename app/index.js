@@ -60,16 +60,32 @@ io.on('connection', (socket) => {
 
 app.post('/api', (req, res) => {
     console.log(req.body);
-    const { shapeName } = req.body;
 
-    // Log the received value
-    console.log("Received param:", shapeName);
+    try {
+        const { shapeName } = req.body;
 
-    // Send a response back
-    res.json({
-        message: 'shapeName received successfully',
-        receivedParam: shapeName
-    });
+        // Log the received value
+        console.log("Shape requested:", shapeName);
+
+        // Send a response back
+        const fullPathToShape = dataFolder + shapeName;
+        const data = fileHandler.readJsonFile(fullPathToShape);
+        if (data) {
+            res.json({
+                message: 'shape retrieved successfully',
+                data: data
+            });
+        } else {
+            res.json({ message: `unable to retrieve file: ${fullPathToShape}` })
+        }
+
+    } catch (e) {
+        console.error(e.message);
+        res.json({
+            message: e.message,
+            body: req.body
+        });
+    }
 });
 
 http.listen(httpPort, () => {
