@@ -28,6 +28,12 @@ class DrawingEngine {
         }
         return `#${getHexString(color[0])}${getHexString(color[1])}${getHexString(color[2])}${getHexString(color[3])}`;
     }
+    Clear() {
+        //clear setting alpha to 0
+        this.DrawSquare([this.canvas.clientWidth / 2, this.canvas.clientHeight / 2],
+            Math.max(this.canvas.clientWidth, this.canvas.clientHeight),
+            "#ffffff00");
+    }
     DrawSquare(center, size, color) {
         let s = size / 2;
         this.context.fillStyle = color;
