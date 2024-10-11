@@ -7,9 +7,9 @@ const Logger = require("./data_logger");
 const WebsocketServer = require("./ws_server");
 const httpPort = 3000;
 const wsPort = 3030;
-const fileHandlerTablet = new FileHandler();
+const fileHandler = new FileHandler();
 const filePrefix = "shapes_";
-const loggerTablet = new Logger(fileHandlerTablet, filePrefix);
+const logger = new Logger(fileHandler, filePrefix);
 
 const wsServer = new WebsocketServer(wsPort, (data) => {
     loggerOculus.logData(data);
@@ -23,14 +23,14 @@ const dataFolder = __dirname + '/public_html/data/';
 const fs = require('fs');
 
 function getFilesList(socket) {
-    let tabletFiles = [];
+    let files = [];
     fs.readdir(dataFolder, (err, files) => {
         files.forEach(file => {
             if (file.includes(filePrefix)) {
-                tabletFiles.push(file);
+                files.push(file);
             }
         });
-        socket.emit('log_msg', { description: "list_files", tabletFiles });
+        socket.emit('log_msg', { description: "list_files", files });
     });
 }
 
@@ -43,17 +43,17 @@ io.on('connection', (socket) => {
     socket.on('log_msg', (msg) => {
         if (msg.ctrl) {
             if (msg.ctrl === 'new_log') {
-                loggerTablet.startLog();
+                logger.startLog();
             }
             if (msg.ctrl === 'close_log') {
 
-                loggerTablet.stopLog();
+                logger.stopLog();
             }
             if (msg.ctrl === 'list_files') {
                 let files = getFilesList(socket);
             }
         } else {
-            loggerTablet.logData(JSON.stringify(msg));
+            logger.logData(JSON.stringify(msg));
         }
     });
 });
