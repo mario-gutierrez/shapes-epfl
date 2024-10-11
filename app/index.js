@@ -16,6 +16,8 @@ const wsServer = new WebsocketServer(wsPort, (data) => {
 });
 
 app.use(express.static(__dirname + '/public_html'));
+// Middleware to parse incoming JSON requests
+app.use(express.json());
 
 const dataFolder = __dirname + '/public_html/data/';
 const fs = require('fs');
@@ -53,6 +55,20 @@ io.on('connection', (socket) => {
         } else {
             loggerTablet.logData(JSON.stringify(msg));
         }
+    });
+});
+
+app.post('/api', (req, res) => {
+    console.log(req.body);
+    const { shapeName } = req.body;
+
+    // Log the received value
+    console.log("Received param:", shapeName);
+
+    // Send a response back
+    res.json({
+        message: 'shapeName received successfully',
+        receivedParam: shapeName
     });
 });
 
