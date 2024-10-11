@@ -79,7 +79,7 @@ class FileHandler {
         });
     }
 
-    readLogFile(filename, onReadLine, onEndOfFile, onError) {
+    readByLinesWithDelegate(filename, onReadLine, onEndOfFile, onError) {
         const lineReader = require('line-reader');
         try {
             // read all lines:
@@ -94,6 +94,14 @@ class FileHandler {
             onError(e);
         }
 
+    }
+    readJsonFile(filePath) {
+        const fs = require('fs');
+        try {
+            return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        } catch (error) {
+            throw error; // Rethrow the error for further handling
+        }
     }
 }
 
