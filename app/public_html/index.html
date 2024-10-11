@@ -52,6 +52,7 @@
 <script src="js/websocket.js"></script>
 <script src="js/touch_api.js"></script>
 <script src="js/drawing_engine.js"></script>
+<script src="js/tools.js"></script>
 <script type="text/javascript">
   const dpi = 264; //iPad Pro 12.9 dpi resolution
   const canvas = document.getElementById("canvas");
@@ -69,6 +70,13 @@
     //clear setting alpha to 0
     drawingEngine.DrawSquare([canvas.clientWidth / 2, canvas.clientHeight / 2], Math.max(canvas.clientWidth, canvas.clientHeight), "#ffffff00");
     const touchHandler = new TouchApi(canvas, drawingEngine, dpi);
+    const shapeName = Tools_getParameterByName('shape');
+
+    if (shapeName) {
+      Tools_postData("http://localhost:3000/api", { shapeName }).then(receivedData => {
+        console.log(receivedData);
+      });
+    }
   }
 
   window.onload = setup;
