@@ -23,7 +23,6 @@ function Tools_postData(url, jsonObject) {
             return response.json(); // Parse the JSON response from the server
         })
         .then(data => {
-            //console.log("Response from POST request:", data);
             return data; // Return the JSON object received from the server
         })
         .catch(error => {
