@@ -334,19 +334,29 @@ class DrawingEngine {
         const lines = this.FindIntersections(p[0], p[1]);
         let t1 = performance.now();
         //logArea.innerHTML += `\nFind Intersections time: ${t1 - t0}ms`;
-        const windingNumbers = this.GetWindingNumbers(lines.xLines, lines.yLines, p);
-        console.log(windingNumbers);
-        const colorIndex = (windingNumbers[0] >= 0 ? windingNumbers[0] : (this.ColorPaletteRGB.length + windingNumbers[0])) % this.ColorPaletteRGB.length;
-        this.Fill(p, this.ColorPaletteRGB[colorIndex]);
 
         let showIntersectionLines = false;
         if (showIntersectionLines) {
             t0 = performance.now();
             this.DrawIntersectionLines(lines.xLines, lines.yLines);
-            this.DrawCircle(p, 10, this.RGBtoHexString(this.ColorPaletteRGB[colorIndex]));
             t1 = performance.now();
             //logArea.innerHTML += `\nDraw Intersection Lines time: ${t1 - t0}ms`;
         }
+
+        const windingNumbers = this.GetWindingNumbers(lines.xLines, lines.yLines, p);
+        console.log('winding numbers:')
+        console.log(windingNumbers);
+        const index = windingNumbers[0].length < windingNumbers[1].length ? 0 : 1;
+        let colorIndex = 0;
+        for (let i = 0; i < windingNumbers[index].length; i++) {
+            colorIndex += windingNumbers[index][i];
+        }
+
+        colorIndex = (colorIndex >= 0 ? colorIndex : (this.ColorPaletteRGB.length + colorIndex)) % this.ColorPaletteRGB.length;
+        console.log(`color index: ${colorIndex}`);
+        this.DrawCircle(p, 10, this.RGBtoHexString(this.ColorPaletteRGB[colorIndex]));
+        this.Fill(p, this.ColorPaletteRGB[colorIndex]);
+
     }
     FillInCanvas() {
         let t0 = performance.now();
@@ -357,6 +367,7 @@ class DrawingEngine {
         const tryToFillArea = (x, y, yIndex) => {
             const alpha = yIndex + x * 4 + 3;
             if (this.currentImageData[alpha] === 0) {
+                console.log(`fill in area: ${x},${y}`);
                 this.FillInArea([x, y]);
             }
         }
