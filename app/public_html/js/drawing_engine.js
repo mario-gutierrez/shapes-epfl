@@ -308,36 +308,24 @@ class DrawingEngine {
         if (!xLines || !yLines) { return [0, 0] };
 
         const lines = [xLines, yLines];
-        const windingNumbers = [];
+        const windingNumbers = [[], []];
         for (let coord = 0; coord < lines.length; coord++) {
-
             const lineSet = lines[coord];
             const linePoints = [];
+            const label = coord == 0 ? 'x' : 'y';
+            console.log(`${label} lines:`);
             for (let lineIndx = 0; lineIndx < lineSet.length; lineIndx++) {
                 const line = lineSet[lineIndx];
                 try {
                     const p0 = this.points[line[0]].p;
                     const p1 = this.points[line[1]].p;
-                    linePoints.push([p0, p1]);
+                    console.log(`${p0} ${p1}`);
+                    const curveSign = p1[coord] > p0[coord] ? 1 : -1;
+                    windingNumbers[coord].push(curveSign * (coord == 1 ? -1 : 1));
                 } catch (e) {
                     console.error(e);
                 }
             }
-
-            const coordToCompare = coord == 0 ? 1 : 0;
-            linePoints.sort((a, b) => a[0][coordToCompare] - b[0][coordToCompare]);
-
-            let windingNumber = 0;
-
-            for (let lineIndx = 0; lineIndx < linePoints.length; lineIndx++) {
-                const lineCoords = linePoints[lineIndx];
-                if (point[coordToCompare] > lineCoords[0][coordToCompare]) {
-                    windingNumber += lineCoords[0][coord] <= lineCoords[1][coord] ? 1 : -1;
-                } else {
-                    break;
-                }
-            }
-            windingNumbers.push(windingNumber);
         }
         return windingNumbers;
     }
