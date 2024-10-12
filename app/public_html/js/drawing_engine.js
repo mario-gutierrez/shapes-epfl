@@ -234,65 +234,49 @@ class DrawingEngine {
         }
     }
     FindIntersections(x, y, drawIntersectionPoints = false) {
-        const intersectionDelta = 3;
-        const xIntersections = [];
-        const yIntersections = [];
-
-        const xLines = [];
-        const yLines = [];
+        const intersectionDelta = 2;
+        const intersections = [[], []];
+        const lines = [[], []];
 
         for (let i = 0; i < this.points.length; i++) {
             const p = this.points[i].p;
-            if (x > 0 && Math.abs(p[0] - x) <= intersectionDelta) {
-                xIntersections.push(i);
+            if (p[1] <= y && Math.abs(p[0] - x) < intersectionDelta) {
+                intersections[0].push(i);
                 if (drawIntersectionPoints) {
-                    this.DrawSquare(p, this.minLineWidth / 2, '#ff0000');
+                    this.DrawSquare(p, this.minLineWidth, '#ff0000');
                 }
             }
 
-            if (y > 0 && Math.abs(p[1] - y) <= intersectionDelta) {
-                yIntersections.push(i);
+            if (p[0] <= x && Math.abs(p[1] - y) < intersectionDelta) {
+                intersections[1].push(i);
                 if (drawIntersectionPoints) {
-                    this.DrawSquare(p, this.minLineWidth / 2, '#ff0000');
+                    this.DrawSquare(p, this.minLineWidth, '#00ff00');
                 }
             }
         }
 
-        let currentLine = [];
-        for (let i = 0; i < xIntersections.length; i++) {
-            if (currentLine.length == 0) {
-                currentLine.push(xIntersections[i]);
-            } else if ((xIntersections[i] - xIntersections[i - 1]) > 1) {
-                currentLine.push(xIntersections[i - 1]);
-                xLines.push(currentLine);
-                currentLine = [xIntersections[i]];
+        for (let c = 0; c < 2; c++) {
+            let currentLine = [];
+            for (let i = 0; i < intersections[c].length; i++) {
+                if (currentLine.length == 0) {
+                    currentLine.push(intersections[c][i]);
+                } else if ((intersections[c][i] - intersections[c][i - 1]) > 1) {
+                    const previousIndex = intersections[c][i - 1];
+                    currentLine.push(previousIndex + 1);
+                    lines[c].push(currentLine);
+                    currentLine = [intersections[c][i]];
+                }
             }
-        }
-        if (currentLine.length == 1 && xIntersections[xIntersections.length - 1] < this.points.length) {
-            currentLine.push(xIntersections[xIntersections.length - 1]);
-        } else if (xIntersections.length > 1) {
-            currentLine = [currentLine[0] - 1, currentLine[0]];
-        }
-        xLines.push(currentLine);
-
-        currentLine = [];
-        for (let i = 0; i < yIntersections.length; i++) {
-            if (currentLine.length == 0) {
-                currentLine.push(yIntersections[i]);
-            } else if ((yIntersections[i] - yIntersections[i - 1]) > 1) {
-                currentLine.push(yIntersections[i - 1]);
-                yLines.push(currentLine);
-                currentLine = [yIntersections[i]];
+            if (currentLine.length == 1 && intersections[c][intersections[c].length - 1] < this.points.length) {
+                const previousIndex = intersections[c][intersections[c].length - 1];
+                currentLine.push(previousIndex + 1);
+            } else if (intersections[c].length > 1) {
+                currentLine = [currentLine[0] - 1, currentLine[0]];
             }
+            lines[c].push(currentLine);
         }
-        if (currentLine.length == 1 && yIntersections[yIntersections.length - 1] < this.points.length) {
-            currentLine.push(yIntersections[yIntersections.length - 1]);
-        } else if (yIntersections.length > 1) {
-            currentLine = [currentLine[0] - 1, currentLine[0]];
-        }
-        yLines.push(currentLine);
 
-        return { xLines, yLines };
+        return { xLines: lines[0], yLines: lines[1] };
     }
     DrawIntersectionLines(xLines, yLines) {
         for (let i = 0; i < xLines.length; i++) {
