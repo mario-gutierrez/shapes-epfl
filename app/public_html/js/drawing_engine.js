@@ -10,7 +10,7 @@ class DrawingEngine {
         this.lineColor = this.RGBtoHexString(this.lineColorRGB);
         this.colorSimilarityThreshold = 10;
         this.maxLineWidth = 10;
-        this.minLineWidth = 5
+        this.minLineWidth = 2
         this.maxDrawingMovement = 100;
         this.imageData = undefined;
         this.currentImageData = undefined;
@@ -177,7 +177,7 @@ class DrawingEngine {
         for (let i = 0; i < this.points.length - 1; i++) {
             const p0 = this.points[i].p;
             const p1 = this.points[i + 1].p;
-            const step = 6;
+            const step = 2;
             const distance = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]);
             if (distance >= step * 2) {
                 const dx = p1[0] - p0[0];
