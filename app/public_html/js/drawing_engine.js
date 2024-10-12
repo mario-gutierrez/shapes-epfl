@@ -279,24 +279,31 @@ class DrawingEngine {
         return { xLines: lines[0], yLines: lines[1] };
     }
     DrawIntersectionLines(xLines, yLines) {
-        for (let i = 0; i < xLines.length; i++) {
-            const line = xLines[i];
-            const p0 = this.points[line[0]].p;
-            const p1 = this.points[line[1]].p;
+        console.log('xLines:');
+        console.log(xLines);
+        console.log('yLines:');
+        console.log(yLines);
+        const lines = [xLines, yLines];
+        const lineColor = ['#ff1000', '#10ff0a'];
 
-            this.DrawVector(p1, p0, 0, 2, '#ff1000');
-            this.DrawSquare(p1, 5, '#ff1000');
-        }
-
-        for (let i = 0; i < yLines.length; i++) {
-            const line = yLines[i];
-            const p0 = this.points[line[0]].p;
-            const p1 = this.points[line[1]].p;
-
-            this.DrawVector(p1, p0, 0, 2, '#00ff10');
-            this.DrawSquare(p1, 5, '#00ff10');
+        for (let c = 0; c < 2; c++) {
+            for (let i = 0; i < lines[c].length; i++) {
+                const line = lines[c][i];
+                if (line.length > 1) {
+                    const p0 = this.points[line[0]].p;
+                    const p1 = this.points[line[1]].p;
+                    const dx = p1[0] - p0[0];
+                    const dy = p1[1] - p0[1];
+                    const l = Math.hypot(dx, dy);
+                    const norm = [dx / l, dy / l];
+                    const p = [norm[0] * 10 + p0[0], norm[1] * 10 + p0[1]];
+                    this.DrawVector(p, p0, 0, 2, lineColor[c]);
+                    this.DrawSquare(p, 5, lineColor[c]);
+                }
+            }
         }
     }
+
     GetWindingNumbers(xLines, yLines, point) {
         if (!xLines || !yLines) { return [0, 0] };
 
