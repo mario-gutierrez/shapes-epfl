@@ -42,7 +42,11 @@ class TouchApi {
 
         for (const ev of ['pointermove']) {
             this.canvas.addEventListener(ev, function (e) {
-                if (!this.isMousedown) return
+                if (!this.isMousedown) {
+                    const point = this.GetPoint(e);
+                    console.log(`hover: ${point.p[0]},${point.p[1]}`);
+                    return;
+                }
                 e.preventDefault();
                 if (this.mode == Modes.Drawing) {
                     const point = this.GetPoint(e);
@@ -64,12 +68,8 @@ class TouchApi {
                     //logArea.innerHTML = `\nFill-in points time: ${t1 - t0}ms`;
                     this.delegate.FillInCanvas();
                 } else if (this.mode == Modes.Filling) {
-                    const manualFillMode = true;
-                    if (manualFillMode) {
-                        this.delegate.LoadImageData();
-                        this.delegate.FillInArea(point.p);
-                        this.delegate.UpdateImageData();
-                    }
+                    console.log(`touch: ${point.p[0]},${point.p[1]}`);
+                    this.delegate.FillInArea(point.p);
                 }
             }.bind(this), false);
         }
