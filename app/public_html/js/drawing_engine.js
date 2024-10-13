@@ -21,6 +21,7 @@ class DrawingEngine {
             [17, 138, 178, 255],
             [7, 59, 76, 255]
         ];
+        this.showIntersectionLines = false;
     }
     RGBtoHexString(color) {
         const getHexString = (n) => {
@@ -337,8 +338,7 @@ class DrawingEngine {
         let t1 = performance.now();
         //logArea.innerHTML += `\nFind Intersections time: ${t1 - t0}ms`;
 
-        let showIntersectionLines = false;
-        if (showIntersectionLines) {
+        if (this.showIntersectionLines) {
             t0 = performance.now();
             this.DrawIntersectionLines(lines.xLines, lines.yLines);
             t1 = performance.now();
