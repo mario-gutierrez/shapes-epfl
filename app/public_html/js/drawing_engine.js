@@ -63,10 +63,15 @@ class DrawingEngine {
 
         this.context.stroke();
     }
+    DrawLineSegments(color) {
+        const screenCoords = this.points[this.points.length - 1].p;
+        if (this.previousPoint) {
+            this.DrawVector(screenCoords, this.previousPoint.p, 0, this.minLineWidth, color);
+        }
+        this.DrawCircle(screenCoords, this.minLineWidth, color);
+    }
     AddPoint(point, status, color = this.lineColor) {
         if (status === 'error') return;
-        this.points.push(point);
-
         if (status === 'end') {
             if (!point.isFromLogFile) {
                 this.websocket.Send(this.points);
@@ -81,12 +86,9 @@ class DrawingEngine {
                 this.websocket.Send({ ctrl: "new_log" });
             }
         }
+        this.points.push(point);
+        this.DrawLineSegments(color);
 
-        const screenCoords = point.p;
-        if (this.previousPoint) {
-            this.DrawVector(screenCoords, this.previousPoint.p, 0, this.minLineWidth, color);
-        }
-        this.DrawCircle(screenCoords, this.minLineWidth, color);
         this.previousPoint = point;
         //logArea.innerHTML = JSON.stringify(point);
     }
