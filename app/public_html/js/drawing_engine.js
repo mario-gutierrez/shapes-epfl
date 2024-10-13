@@ -394,6 +394,10 @@ class DrawingEngine {
         }
 
         this.UpdateImageData();
+        // Show seed points after full coloring
+        // for (let i = 0; i < seedPoints.length; i++) {
+        //     this.DrawCircle(seedPoints[i], 5, '#00ff00');
+        // }
         let t1 = performance.now();
         console.log(`Full Canvas Coloring time: ${t1 - t0}ms`);
     }
