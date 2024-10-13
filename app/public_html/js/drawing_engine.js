@@ -5,7 +5,7 @@ class DrawingEngine {
         this.websocket = websocket;
         this.canvas = canvas;
         this.previousPoint = undefined;
-        this.lineAlphaValue = 250;
+        this.lineAlphaValue = 255;
         this.lineColorRGB = [1, 1, 1, this.lineAlphaValue];
         this.lineColor = this.RGBtoHexString(this.lineColorRGB);
         this.colorSimilarityThreshold = 10;
