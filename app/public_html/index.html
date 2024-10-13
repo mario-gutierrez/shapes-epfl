@@ -76,8 +76,9 @@
       Tools_postData("/api", { shapeName }).then(receivedData => {
         //console.log(receivedData);
         if (receivedData.data) {
-          touchHandler.mode = Modes.Filling;
           DrawShape(drawingEngine, receivedData.data);
+          touchHandler.mode = Modes.Filling;
+          drawingEngine.showIntersectionLines = true;
         }
       });
     }
