@@ -67,6 +67,7 @@ class TouchApi {
                     let t1 = performance.now();
                     //logArea.innerHTML = `\nFill-in points time: ${t1 - t0}ms`;
                     this.delegate.FillInCanvas();
+                    this.mode == Modes.Filling;
                 } else if (this.mode == Modes.Filling) {
                     console.log(`touch: ${point.p[0]},${point.p[1]}`);
                     this.delegate.FillInArea(point.p);
