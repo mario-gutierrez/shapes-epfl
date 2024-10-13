@@ -70,6 +70,29 @@ class DrawingEngine {
         }
         this.DrawCircle(screenCoords, this.minLineWidth, color);
     }
+    DrawQuadraticBezier(color) {
+        this.context.strokeStyle = color;
+        this.context.lineCap = 'round';
+        this.context.lineJoin = 'round';
+
+        const l = this.points.length - 1;
+        if (this.points.length >= 3) {
+            const xc = (this.points[l].p[0] + this.points[l - 1].p[0]) / 2;
+            const yc = (this.points[l].p[1] + this.points[l - 1].p[1]) / 2;
+            this.context.lineWidth = this.minLineWidth;
+            this.context.quadraticCurveTo(this.points[l - 1].p[0], this.points[l - 1].p[1], xc, yc);
+            this.context.stroke();
+            this.context.beginPath();
+            this.context.moveTo(xc, yc);
+        } else {
+            const point = this.points[l].p;
+            this.context.lineWidth = this.minLineWidth;
+            this.context.strokeStyle = color;
+            this.context.beginPath();
+            this.context.moveTo(point[0], point[1]);
+            this.context.stroke();
+        }
+    }
     AddPoint(point, status, color = this.lineColor) {
         if (status === 'error') return;
         if (status === 'end') {
@@ -87,8 +110,7 @@ class DrawingEngine {
             }
         }
         this.points.push(point);
-        this.DrawLineSegments(color);
-
+        this.DrawQuadraticBezier(color);
         this.previousPoint = point;
         //logArea.innerHTML = JSON.stringify(point);
     }
