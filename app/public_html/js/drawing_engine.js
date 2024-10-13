@@ -361,36 +361,47 @@ class DrawingEngine {
     FillInCanvas() {
         let t0 = performance.now();
         this.LoadImageData();
-        const halfWidth = Math.round(this.canvas.width / 2);
-        const halfHeight = Math.round(this.canvas.height / 2);
+        const horizontalStride = this.canvas.width * 4;
+        const seedPoints = [];
 
-        const tryToFillArea = (x, y, yIndex) => {
-            const alpha = yIndex + x * 4 + 3;
-            if (this.currentImageData[alpha] === 0) {
-                console.log(`fill in area: ${x},${y}`);
-                this.FillInArea([x, y]);
+        const getIndex = (x, y) => {
+            return (horizontalStride * y + x * 4);
+        }
+
+        const tryToFillArea = (x, y, step) => {
+            if (this.currentImageData[getIndex(x, y) + 3] === 0) {
+                let alphaSum = 0;
+                for (let col = x - step; col < x + step; col++) {
+                    for (let row = y - step; row < y + step; row++) {
+                        const alphaIndex = getIndex(col, row) + 3;
+                        if (alphaIndex >= 0 && alphaIndex < this.currentImageData.length) {
+                            alphaSum += this.currentImageData[alphaIndex];
+                        }
+                    }
+                }
+                if (alphaSum === 0) {
+                    console.log(`fill in area: ${x},${y}`);
+                    seedPoints.push([x, y]);
+                    this.FillInArea([x, y]);
+                }
             }
         }
 
-        const doVerticalScan = (x) => {
-            let yIndex = this.canvas.width * 4 * halfHeight;
-            for (let y = halfHeight; y < this.canvas.height; y++) {
-                tryToFillArea(x, y, yIndex);
-                yIndex += this.canvas.width * 4;
-            }
-            yIndex = this.canvas.width * 4 * (halfHeight - 1);
-            for (let y = halfHeight - 1; y >= 0; y--) {
-                tryToFillArea(x, y, yIndex);
-                yIndex -= this.canvas.width * 4;
+        let step = 4;
+        let areaSide = 3;
+
+        for (let x = step; x < this.canvas.width; x += step) {
+            for (let y = step; y < this.canvas.height; y += step) {
+                tryToFillArea(x, y, areaSide);
             }
         }
 
-        for (let x = halfWidth; x < this.canvas.width; x++) {
-            doVerticalScan(x);
-        }
-
-        for (let x = halfWidth; x >= 0; x--) {
-            doVerticalScan(x);
+        step = 1;
+        areaSide = 2;
+        for (let x = step; x < this.canvas.width; x += step) {
+            for (let y = step; y < this.canvas.height; y += step) {
+                tryToFillArea(x, y, areaSide);
+            }
         }
 
         this.UpdateImageData();
