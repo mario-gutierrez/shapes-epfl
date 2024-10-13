@@ -273,7 +273,9 @@ class DrawingEngine {
             } else if (intersections[c].length > 1) {
                 currentLine = [currentLine[0] - 1, currentLine[0]];
             }
-            lines[c].push(currentLine);
+            if (currentLine.length > 0) {
+                lines[c].push(currentLine);
+            }
         }
 
         return { xLines: lines[0], yLines: lines[1] };
