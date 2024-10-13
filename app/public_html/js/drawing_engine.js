@@ -352,7 +352,7 @@ class DrawingEngine {
             colorIndex += windingNumbers[index][i];
         }
 
-        colorIndex = (colorIndex >= 0 ? colorIndex : (this.ColorPaletteRGB.length + colorIndex)) % this.ColorPaletteRGB.length;
+        colorIndex = (colorIndex >= 0 ? colorIndex : (this.ColorPaletteRGB.length - 1 + colorIndex)) % this.ColorPaletteRGB.length;
         console.log(`color index: ${colorIndex}`);
         this.DrawCircle(p, 10, this.RGBtoHexString(this.ColorPaletteRGB[colorIndex]));
         this.Fill(p, this.ColorPaletteRGB[colorIndex]);
