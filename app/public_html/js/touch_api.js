@@ -43,8 +43,8 @@ class TouchApi {
         for (const ev of ['pointermove']) {
             this.canvas.addEventListener(ev, function (e) {
                 if (!this.isMousedown) {
-                    const point = this.GetPoint(e);
-                    console.log(`hover: ${point.p[0]},${point.p[1]}`);
+                    // const point = this.GetPoint(e);
+                    // console.log(`hover: ${point.p[0]},${point.p[1]}`);
                     return;
                 }
                 e.preventDefault();
