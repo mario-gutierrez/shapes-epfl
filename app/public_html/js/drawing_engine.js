@@ -348,7 +348,7 @@ class DrawingEngine {
                     const p0 = this.points[line[0]].p;
                     const p1 = this.points[line[1]].p;
                     //console.log(`points: ${p0} ${p1}`);
-                    const curveSign = p1[coord] >= p0[coord] ? 1 : -1;
+                    const curveSign = p1[coord] >= p0[coord] ? -1 : 1;
                     windingNumbers[coord].push(curveSign * (coord == 1 ? -1 : 1));
                 } catch (e) {
                     console.error(e);
