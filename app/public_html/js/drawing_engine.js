@@ -10,7 +10,7 @@ class DrawingEngine {
         this.lineColor = this.RGBtoHexString(this.lineColorRGB);
         this.colorSimilarityThreshold = 10;
         this.maxLineWidth = 10;
-        this.minLineWidth = 2
+        this.minLineWidth = 3;
         this.maxDrawingMovement = 100;
         this.imageData = undefined;
         this.currentImageData = undefined;
