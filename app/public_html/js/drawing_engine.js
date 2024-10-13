@@ -319,6 +319,7 @@ class DrawingEngine {
             console.log(`${label} lines:`);
             for (let lineIndx = 0; lineIndx < lineSet.length; lineIndx++) {
                 const line = lineSet[lineIndx];
+                //console.log(`line indices: ${line}`);
                 try {
                     const p0 = this.points[line[0]].p;
                     const p1 = this.points[line[1]].p;
