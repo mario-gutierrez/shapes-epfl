@@ -294,7 +294,7 @@ class DrawingEngine {
             }
             if (currentLine.length == 1 && intersections[c][intersections[c].length - 1] < this.points.length) {
                 const previousIndex = intersections[c][intersections[c].length - 1];
-                currentLine.push(previousIndex + 1);
+                currentLine.push(previousIndex);
             } else if (intersections[c].length > 1) {
                 currentLine = [currentLine[0] - 1, currentLine[0]];
             }
