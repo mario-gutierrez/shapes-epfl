@@ -235,7 +235,7 @@ class DrawingEngine {
         }
     }
     FindIntersections(x, y, drawIntersectionPoints = false) {
-        const intersectionDelta = 2;
+        const intersectionDelta = 3;
         const intersections = [[], []];
         const lines = [[], []];
 
