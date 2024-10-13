@@ -395,7 +395,7 @@ class DrawingEngine {
 
         this.UpdateImageData();
         let t1 = performance.now();
-        //logArea.innerHTML += `\nFull Canvas Coloring time: ${t1 - t0}ms`;
+        console.log(`Full Canvas Coloring time: ${t1 - t0}ms`);
     }
     LoadImageData() {
         this.imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
