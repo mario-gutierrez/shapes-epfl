@@ -340,7 +340,7 @@ class DrawingEngine {
             const lineSet = lines[coord];
             const linePoints = [];
             const label = coord == 0 ? 'x' : 'y';
-            console.log(`${label} lines:`);
+            //console.log(`${label} lines:`);
             for (let lineIndx = 0; lineIndx < lineSet.length; lineIndx++) {
                 const line = lineSet[lineIndx];
                 //console.log(`line indices: ${line}`);
